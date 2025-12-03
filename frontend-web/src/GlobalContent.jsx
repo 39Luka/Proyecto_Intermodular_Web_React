@@ -1,0 +1,18 @@
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './assets/styles/index.css'
+import App from './App.jsx'
+import { BrowserRouter } from 'react-router-dom'
+
+createRoot(document.getElementById('root')).render(
+  <BrowserRouter>
+    <StrictMode>
+      
+      <a href="#main-content">
+        Saltar al contenido principal
+      </a>
+
+      <App />
+    </StrictMode>
+  </BrowserRouter>
+)
