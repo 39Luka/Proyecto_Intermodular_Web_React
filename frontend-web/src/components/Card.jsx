@@ -18,6 +18,7 @@ function Card({ id, title, image, description, onNavigate }) {
     return (
         <>
             <article
+                className="card"
                 id={slug}
                 role="button"
                 tabIndex={0}

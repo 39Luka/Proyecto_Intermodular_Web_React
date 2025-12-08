@@ -4,7 +4,7 @@ import { mockProducts } from "../data/mockProducts";
 function Products() {
     return (
         <>
-        <ProductSection title="Products" products={mockProducts} page="products"/>
+        <ProductSection title="Productos" products={mockProducts} page="products"/>
 
         </>
     )

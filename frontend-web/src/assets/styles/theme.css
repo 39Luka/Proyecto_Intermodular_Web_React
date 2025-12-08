@@ -1,0 +1,81 @@
+/* ===== Colores ===== */
+:root {
+  /* Primary */
+  --color-primary100: #ffddc5; --color-primary100-rgb: 255,221,197;
+  --color-primary200: #ffba8b; --color-primary200-rgb: 255,186,139;
+  --color-primary300: #ff9851; --color-primary300-rgb: 255,152,81;
+  --color-primary400: #ff7313; --color-primary400-rgb: 255,115,19;
+  --color-primary500: #d45600; --color-primary500-rgb: 212,86,0;
+  --color-primary600: #963d00; --color-primary600-rgb: 150,61,0;
+
+
+  --color-card: #ebe6ee;
+  --color-card-border: #9a80a9;
+
+  /* Secondary */
+  --color-secondary100: #d485ff; --color-secondary100-rgb: 212,133,255;
+  --color-secondary200: #be48ff; --color-secondary200-rgb: 190,72,255;
+  --color-secondary300: #a80cff; --color-secondary300-rgb: 168,12,255;
+  --color-secondary400: #8400ce; --color-secondary400-rgb: 132,0,206;
+  --color-secondary500: #5d0091; --color-secondary500-rgb: 93,0,145;
+  --color-secondary600: #360054; --color-secondary600-rgb: 54,0,84;
+
+  /* Neutral */
+  --color-neutral100: #ffffff; --color-neutral100-rgb: 255,255,255;
+  --color-neutral200: #e8e8e8; --color-neutral200-rgb: 232,232,232;
+  --color-neutral300: #d2d2d2; --color-neutral300-rgb: 210,210,210;
+  --color-neutral400: #bbbbbb; --color-neutral400-rgb: 187,187,187;
+  --color-neutral500: #a4a4a4; --color-neutral500-rgb: 164,164,164;
+  --color-neutral600: #8e8e8e; --color-neutral600-rgb: 142,142,142;
+  --color-neutral700: #777777; --color-neutral700-rgb: 119,119,119;
+  --color-neutral800: #606060; --color-neutral800-rgb: 96,96,96;
+  --color-neutral900: #4a4a4a; --color-neutral900-rgb: 74,74,74;
+  --color-neutral1000: #333333; --color-neutral1000-rgb: 51,51,51;
+
+  /* Feedback - Error */
+  --color-error100: #ffc5ca; --color-error100-rgb: 255,197,202;
+  --color-error200: #ff8b94; --color-error200-rgb: 255,139,148;
+  --color-error300: #ff4e5b; --color-error300-rgb: 255,78,91;
+  --color-error400: #ff1023; --color-error400-rgb: 255,16,35;
+  --color-error500: #d20010; --color-error500-rgb: 210,0,16;
+  --color-error600: #94000c; --color-error600-rgb: 148,0,12;
+
+  /* Feedback - Warning */
+  --color-warning100: #ffd1ba; --color-warning100-rgb: 255,209,186;
+  --color-warning200: #ffa97f; --color-warning200-rgb: 255,169,127;
+  --color-warning300: #ff8243; --color-warning300-rgb: 255,130,67;
+  --color-warning400: #ff5a08; --color-warning400-rgb: 255,90,8;
+  --color-warning500: #cc4400; --color-warning500-rgb: 204,68,0;
+  --color-warning600: #903000; --color-warning600-rgb: 144,48,0;
+
+  /* Feedback - Success */
+  --color-success100: #daf5eb; --color-success100-rgb: 218,245,235;
+  --color-success200: #b5ead7; --color-success200-rgb: 181,234,215;
+  --color-success300: #82dcbc; --color-success300-rgb: 130,220,188;
+  --color-success400: #50cda0; --color-success400-rgb: 80,205,160;
+  --color-success500: #31ac80; --color-success500-rgb: 49,172,128;
+  --color-success600: #22795a; --color-success600-rgb: 34,121,90;
+
+  /* ===== Tipografías ===== */
+  --font-heading: "Nunito", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+
+  /* ===== Tamaños de fuente ===== */
+  --text-h1: 48px; --text-h1-line: 72px;
+  --text-h2: 40px; --text-h2-line: 60px;
+  --text-h3: 34px; --text-h3-line: 51px;
+  --text-h4: 28px; --text-h4-line: 42px;
+  --text-h5: 24px; --text-h5-line: 36px;
+  --text-h6: 20px; --text-h6-line: 30px;
+
+  --text-b1: 20px; --text-b1-line: 30px;
+  --text-b2: 16px; --text-b2-line: 24px;
+  --text-b3: 14px; --text-b3-line: 21px;
+  --text-b4: 12px; --text-b4-line: 18px;
+  --text-b5: 10px; --text-b5-line: 15px;
+
+  /* ===== Pesos de fuente ===== */
+  --font-heading-bold: 700;
+  --font-heading-medium: 500;
+  --font-body-regular: 400;
+}
