@@ -2,7 +2,7 @@ import Nav from "./Nav.jsx";
 function Header(){
     return(
         <>
-        <header>
+        <header className="main-header">
             
             <Nav/>
 

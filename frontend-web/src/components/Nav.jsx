@@ -4,11 +4,11 @@ function Nav(){
     return(
         <>
             <nav aria-label="main-navigation">
-                <NavLink to="/home">Inicio</NavLink>
-                <NavLink to="/cart">Carrito</NavLink>
-                <NavLink to="/products">Catálogo</NavLink>
-                <NavLink to="/promo">Mis promociones</NavLink>
-                <NavLink to="/purchased">Mis compras</NavLink>
+                <NavLink className="boton" to="/home">Inicio</NavLink>
+                <NavLink className="boton"to="/cart">Carrito</NavLink>
+                <NavLink  className="boton"to="/products">Catálogo</NavLink>
+                <NavLink  className="boton"to="/promo">Mis promociones</NavLink>
+                <NavLink  className="boton"to="/purchased">Mis compras</NavLink>
             </nav>
         </>
     )

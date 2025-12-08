@@ -9,8 +9,9 @@
   --color-primary600: #963d00; --color-primary600-rgb: 150,61,0;
 
 
-  --color-card: #ebe6ee;
-  --color-card-border: #9a80a9;
+  /*Design colors*/
+  --color-bg: #ebe6ee;
+  --color-border: #9a80a9;
 
   /* Secondary */
   --color-secondary100: #d485ff; --color-secondary100-rgb: 212,133,255;

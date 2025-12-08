@@ -64,8 +64,8 @@ h6 {
   width: 210px;
   height: 270px;
 
-  background: var(--color-card);
-  border: 2px solid var(--color-card-border);
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(154, 128, 169, 0.18);
   transition: all 0.25s ease;
@@ -123,3 +123,135 @@ h6 {
   flex-wrap: wrap;
   gap: 1rem; /* separa todas las tarjetas automáticamente */
 }
+
+/* ===== Main Header ===== */
+.main-header {
+  background-color: var(--color-bg);
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;       /* centra verticalmente el contenido */
+  justify-content: space-between; /* separa logo y nav */
+}
+
+/* ===== Nav dentro del header ===== */
+.main-header nav {
+  display: flex;
+  align-items: center; /* centra verticalmente los botones */
+  gap: 1rem;           /* separa los botones */
+}
+
+/* ===== Botón normal (integrado, sin sobresalir) ===== */
+.boton {
+  background-color: var(--color-secondary500); /* color normal */
+  color: var(--color-neutral100);             /* texto blanco */
+  font-family: var(--font-heading);           /* misma fuente que los headings */
+  font-size: var(--text-b1);
+  line-height: var(--text-b1-line);
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  text-decoration: none; /* quita subrayado si es un enlace */
+  display: inline-block;
+  transition: background-color 0.2s ease; /* solo transición de color si cambia */
+  box-shadow: none; /* sin sombra para que no parezca flotando */
+}
+
+/* ===== Hover: sin levantarse ===== */
+.boton:hover {
+  transform: none;    /* sin movimiento */
+  box-shadow: none;   /* sin sombra */
+  opacity: 0.9;       /* opcional: ligera retroalimentación visual */
+}
+
+/* ===== Botón activo ===== */
+.boton.active {
+  background-color: var(--color-primary600); /* color activo */
+  color: var(--color-neutral100);
+}
+
+/* ===== Opcional: efecto click ===== */
+.boton:active {
+  transform: none;    /* sin movimiento */
+  box-shadow: none;   /* sin sombra */
+}
+
+
+
+/* ===== Enlaces sin subrayado ===== */
+a {
+  text-decoration: none;
+  color: inherit; /* hereda color del botón o del texto */
+}
+
+
+/* ===== Botón normal (naranja, integrado) ===== */
+button {
+  background-color: var(--color-primary600); /* color activo */
+  color: var(--color-neutral100);             
+  font-family: var(--font-heading);           
+  font-size: var(--text-b1);
+  line-height: var(--text-b1-line);
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 24px; /* más redondo */
+  cursor: pointer;
+  text-decoration: none; 
+  display: inline-block;
+  transition: background-color 0.2s ease; 
+  box-shadow: none; 
+}
+
+/* Hover: integrado, sin sobresalir */
+button:hover {
+  transform: none;
+  box-shadow: none;
+  opacity: 0.9;       
+}
+
+/* Contenedor principal del producto */
+.product-detail {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;             /* espacio entre texto e imagen */
+  align-items: flex-start;
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+/* Contenido textual: header, párrafos, botón */
+.product-detail .content {
+  flex: 1;               /* ocupa todo el espacio disponible */
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;           /* separa los elementos verticalmente */
+}
+
+/* Header */
+.product-detail header h2 {
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-heading);
+  color: var(--color-secondary600);
+}
+
+
+.product-detail button:hover {
+  opacity: 0.9;
+}
+
+/* Imagen */
+.product-detail figure {
+  flex: 0 0 300px;       /* ancho fijo */
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.product-detail figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+
