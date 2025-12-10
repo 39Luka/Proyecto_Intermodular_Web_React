@@ -1,7 +1,7 @@
 import slugify from "slugify";
 import ProductList from "./ProductList";
 
-function ProductSection({ title, products, page, options }) {
+function ProductSection({ title, products, page, options, variant}) {
 
     const slug = slugify(title, { lower: true, strict: true })
 
@@ -12,7 +12,7 @@ function ProductSection({ title, products, page, options }) {
 
 
                 <div className="cards-container">
-                    <ProductList products={products} options={options} page={page} />
+                    <ProductList products={products} options={options} page={page} variant={variant}/>
                 </div>
             </section>
         </>

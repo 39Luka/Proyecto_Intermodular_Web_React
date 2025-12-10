@@ -1,7 +1,7 @@
 import Card from "./Card";
 import {useNavigate} from 'react-router-dom'
 
-function ProductList({products, page, options = {}}){
+function ProductList({products, page, variant, options = {}}){
    
 
     const navigate = useNavigate();
@@ -30,6 +30,7 @@ function ProductList({products, page, options = {}}){
               description={product.description}
               image={product.image}
               onNavigate={handleNavigate}
+              variant={variant}
             />
         )}
         </>

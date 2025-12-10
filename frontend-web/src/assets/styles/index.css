@@ -53,9 +53,11 @@ section {
   margin: 1rem 0 2rem;
 }
 
+/* CARD DEFAULT (VERTICAL) */
 .card {
   display: flex;
   flex-direction: column;
+  gap: 0.7rem;
   padding: 1rem;
   width: 210px;
   height: 270px;
@@ -73,13 +75,11 @@ section {
   box-shadow: var(--shadow-card-hover);
 }
 
+/* Imagen */
 .card figure {
-  margin: 0 0 0.8rem 0; /* separa imagen del contenido */
+  margin: 0;
   width: 100%;
   aspect-ratio: 1 / 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: hidden;
   border-radius: 8px;
 }
@@ -91,21 +91,87 @@ section {
   border-radius: 8px;
 }
 
+/* Título */
 .card h3 {
-  margin: 0 0 0.4rem 0; /* separa título de descripción */
+  margin: 0;
+  margin-bottom: 0.3rem;
   font-size: var(--text-h5);
   line-height: var(--text-h5-line);
   color: var(--color-text-primary);
   text-align: left;
 }
 
+/* Descripción */
 .card p {
-  margin: 0.2rem 0 0 0; /* pequeño espacio arriba */
+  margin: 0;
   font-size: var(--text-b2);
   line-height: var(--text-b2-line);
   color: var(--color-text-primary);
   font-weight: var(--font-body-regular);
-  text-align: right;
+  text-align: left;
+}
+
+/* ===== CARD HORIZONTAL ===== */
+.card-horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.card-horizontal:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Imagen izquierda */
+.card-horizontal figure {
+  margin: 0;
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card-horizontal figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Texto */
+.card-horizontal .content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.card-horizontal h3 {
+  margin: 0;
+  font-size: var(--text-h5);
+  line-height: var(--text-h5-line);
+  color: var(--color-text-primary);
+}
+
+.card-horizontal p {
+  margin: 0;
+  font-size: var(--text-b2);
+  line-height: var(--text-b2-line);
+  color: var(--color-text-primary);
+  font-weight: var(--font-body-regular);
 }
 
 /* ===== Header ===== */
@@ -163,7 +229,7 @@ button {
   border-radius: 24px;
 }
 
-button:hover { opacity: 0.9; transform: none; box-shadow: none; }
+button:hover { opacity: 0.9; }
 
 /* ===== Product Detail ===== */
 .product-detail {
@@ -176,10 +242,10 @@ button:hover { opacity: 0.9; transform: none; box-shadow: none; }
   border-radius: 12px;
   margin: 0 auto;
   justify-content: center;
-  max-width: 900px; /* o el ancho que quieras */
+  max-width: 900px;
   width: 100%;
   flex-wrap: wrap;
-  box-sizing: border-box; /* evita que el padding sume al ancho */
+  box-sizing: border-box;
 }
 
 .product-detail figure {
@@ -233,7 +299,7 @@ button:hover { opacity: 0.9; transform: none; box-shadow: none; }
 
 .add-to-cart:hover { opacity: 0.9; }
 
-/* ===== Accesibilidad: "skip to content" ===== */
+/* ===== Accesibilidad ===== */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -266,7 +332,6 @@ button:hover { opacity: 0.9; transform: none; box-shadow: none; }
   background-color: var(--color-bg);
   padding: 2rem 0;
   margin-top: 3rem;
-  box-shadow: none;
 }
 
 .footer-container {
@@ -292,7 +357,6 @@ button:hover { opacity: 0.9; transform: none; box-shadow: none; }
   font-size: var(--text-h5);
   line-height: var(--text-h5-line);
   color: var(--color-secondary500);
-  margin-bottom: 0.5rem;
 }
 
 .footer-column a {
@@ -316,70 +380,4 @@ button:hover { opacity: 0.9; transform: none; box-shadow: none; }
   font-size: var(--text-b3);
   line-height: var(--text-b3-line);
   color: var(--color-neutral700);
-}
-
-.card-horizontal {
-  display: flex;
-  flex-direction: row; /* horizontal */
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  width: 100%;           /* ocupa todo el ancho del contenedor */
-  max-width: 500px;      /* ancho máximo */
-  background: var(--color-bg);
-  border: 2px solid var(--color-border);
-  border-radius: 12px;
-  box-shadow: var(--shadow-card);
-  transition: all 0.25s ease;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.card-horizontal:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card-hover);
-}
-
-/* Contenedor del texto */
-.card-horizontal .content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  flex: 1; /* ocupa el espacio restante */
-}
-
-/* Imagen */
-.card-horizontal figure {
-  margin: 0;
-  width: 100px;
-  height: 100px;
-  flex-shrink: 0; /* evita que se reduzca */
-  overflow: hidden;
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.card-horizontal figure img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-/* Texto */
-.card-horizontal h3 {
-  margin: 0;
-  font-size: var(--text-h5);
-  line-height: var(--text-h5-line);
-  color: var(--color-text-primary);
-}
-
-.card-horizontal p {
-  margin: 0;
-  font-size: var(--text-b2);
-  line-height: var(--text-b2-line);
-  color: var(--color-text-primary);
-  font-weight: var(--font-body-regular);
 }
