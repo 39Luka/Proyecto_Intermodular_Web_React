@@ -11,32 +11,33 @@ function ProductDetail() {
     return (
         <>
             <article className="product-detail" aria-labelledby={`title-${name}`}>
-                {/* Contenedor del texto y botones */}
-                <div className="content">
-                    <header>
-                        <h2 id={`title-${name}`}>{product.title}</h2>
-                    </header>
+  {/* Imagen */}
+  <figure>
+    <img
+      src={product.image}
+      alt={`Imagen de ${product.title}`}
+    />
+  </figure>
 
-                    <p>{product.description}</p>
+  {/* Contenedor del texto y botón */}
+  <div className="content">
+    <header>
+      <h2 id={`title-${name}`}>{product.title}</h2>
+    </header>
 
-                    <p><strong>Precio: </strong>{product.price.toFixed(2)}€</p>
+    <p className="description">{product.description}</p>
 
-                    <p><strong>Stock: </strong>{product.stock > 0 ? `${product.stock} unidades` : "Sin stock"}</p>
+    <div className="product-info">
+      <p><strong>Precio:</strong> {product.price.toFixed(2)}€</p>
+      <p><strong>Stock:</strong> {product.stock > 0 ? product.stock : "0"}</p>
+    </div>
 
-                    <button type="button">
-                        Añadir al carrito
-                    </button>
-                </div>
+    <button className="add-to-cart">
+      Añadir al carrito
+    </button>
+  </div>
+</article>
 
-                {/* Imagen */}
-                <figure>
-                    <img
-                        src={product.image}
-                        alt={`Imagen de ${product.title}`}
-                    />
-                    <figcaption>{product.title}</figcaption>
-                </figure>
-            </article>
 
         </>
     )

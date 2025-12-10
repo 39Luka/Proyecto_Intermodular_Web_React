@@ -13,7 +13,7 @@ createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <StrictMode>
       
-      <a href="#main-content">
+      <a href="#main-content" className='sr-only'>
         Saltar al contenido principal
       </a>
 
