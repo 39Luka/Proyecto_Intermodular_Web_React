@@ -1,5 +1,5 @@
-import CardVertical from "../components/CardVertical";
-import ProductSection from "../components/ProductSection";
+import CardVertical from "../components/cards/CardVertical";
+import ProductSection from "../components/sections/ProductSection";
 import { mockProducts } from "../data/mockProducts";
 
 function Products() {

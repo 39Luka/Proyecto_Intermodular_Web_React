@@ -7,7 +7,6 @@ export default function Footer() {
 
       </div>
 
-      {/* Texto final */}
       <div className="footer-bottom">
         &copy; {new Date().getFullYear()} La Croassantina. Todos los derechos reservados.
       </div>
