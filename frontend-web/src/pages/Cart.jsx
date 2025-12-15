@@ -1,3 +1,4 @@
+import CardHorizontal from "../components/CardHorizontal";
 import ProductSection from "../components/ProductSection";
 import { mockProducts } from "../data/mockProducts";
 function Cart(){
@@ -7,7 +8,7 @@ function Cart(){
                 title="Home"
                 products={mockProducts}
                 page="products"
-                variant="horizontal"
+                CardComponent={CardHorizontal}
                 options={{
                     limit: 8
                 }} />

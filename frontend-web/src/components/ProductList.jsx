@@ -1,38 +1,34 @@
-import Card from "./Card";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
-function ProductList({products, page, variant, options = {}}){
-   
+function ProductList({ products, page, CardComponent, options = {} }) {
 
     const navigate = useNavigate();
 
-    const handleNavigate = (id) =>  navigate(`/${page}/${id}`); 
-
+    const handleNavigate = (id) => navigate(`/${page}/${id}`);
 
     let items = [...products];
 
-    if(options.filter)
+    if (options.filter)
         items = items.filter(options.filter)
 
-    if(options.sort)
+    if (options.sort)
         items.sort(options.sort)
 
-    if(options.limit)
-        items = items.slice(0,options.limit)
-   
-    return(
+    if (options.limit)
+        items = items.slice(0, options.limit)
+
+
+    return (
         <>
-        {items.map(product =>
-            <Card
-              key={product.id}
-              id={product.id}
-              title={product.title}
-              description={product.description}
-              image={product.image}
-              onNavigate={handleNavigate}
-              variant={variant}
-            />
-        )}
+            {items.map(product =>
+                <CardComponent
+                    key={product.id}
+                    id={product.id}
+                    {...product}
+                    onNavigate={handleNavigate}
+                />
+
+            )}
         </>
     )
 }
