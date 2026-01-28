@@ -1,0 +1,8 @@
+/* ===== Reset & Base ===== */
+body {
+  font-family: var(--font-body);
+  color: var(--color-neutral1000);
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-neutral100);
+}

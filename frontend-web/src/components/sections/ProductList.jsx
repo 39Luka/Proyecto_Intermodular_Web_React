@@ -1,26 +1,17 @@
 import { useNavigate } from 'react-router-dom'
 
-function ProductList({ products, page, CardComponent, options = {} }) {
+function ProductList({ products, page, CardComponent }) {
 
     const navigate = useNavigate();
 
-    const handleNavigate = (id) => navigate(`/${page}/${id}`);
-
-    let items = [...products];
-
-    if (options.filter)
-        items = items.filter(options.filter)
-
-    if (options.sort)
-        items.sort(options.sort)
-
-    if (options.limit)
-        items = items.slice(0, options.limit)
-
+    const handleNavigate = page ? (id) => {
+        const product = products.find(p => p.id === id);
+        navigate(`/${page}/${id}`, { state: { product } });
+    } : undefined;
 
     return (
         <>
-            {items.map(product =>
+            {products.map(product =>
                 <CardComponent
                     key={product.id}
                     id={product.id}

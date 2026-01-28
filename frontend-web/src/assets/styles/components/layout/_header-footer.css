@@ -1,0 +1,94 @@
+/* ===== Header ===== */
+.header {
+    width: 100%;
+    background-color: var(--color-bg);
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+    box-shadow: none;
+}
+
+.header__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+}
+
+.header__logo {
+    flex-shrink: 0;
+    /* Protect logo from squashing */
+}
+
+.header__nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Revert specific button overrides for nav */
+.header__nav .button {
+    /* No specific overrides needed, use default .button styles */
+    flex: 0 0 auto;
+}
+
+/* Removed specific media query as flex-wrap handles structure naturally */
+
+/* ===== Footer ===== */
+.footer {
+    width: 100%;
+    background-color: var(--color-bg);
+    padding: 2rem 0;
+    margin-top: 3rem;
+}
+
+.footer__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 2rem;
+    gap: 2rem;
+}
+
+.footer__column {
+    flex: 1 1 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footer__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-h5);
+    line-height: var(--text-h5-line);
+    color: var(--color-secondary500);
+}
+
+.footer__link {
+    font-family: var(--font-body);
+    font-size: var(--text-b2);
+    line-height: var(--text-b2-line);
+    color: var(--color-neutral1000);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer__link:hover {
+    color: var(--color-primary600);
+}
+
+.footer__bottom {
+    width: 100%;
+    text-align: center;
+    margin-top: 2rem;
+    font-family: var(--font-body);
+    font-size: var(--text-b3);
+    line-height: var(--text-b3-line);
+    color: var(--color-neutral700);
+}

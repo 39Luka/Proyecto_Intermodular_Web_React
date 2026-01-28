@@ -1,0 +1,10 @@
+/* ===== Layout Base ===== */
+.app-container {
+    padding: 0 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+section {
+    margin-bottom: 3rem;
+}

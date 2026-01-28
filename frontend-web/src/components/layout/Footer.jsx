@@ -1,13 +1,13 @@
 export default function Footer() {
   return (
-    <footer className="main-footer">
-      <div className="footer-container">
-     
-       
+    <footer className="footer">
+      <div className="footer__container">
+
+
 
       </div>
 
-      <div className="footer-bottom">
+      <div className="footer__bottom">
         &copy; {new Date().getFullYear()} La Croassantina. Todos los derechos reservados.
       </div>
     </footer>

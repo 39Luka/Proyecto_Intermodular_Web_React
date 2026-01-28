@@ -1,16 +1,16 @@
 import ProductList from "./ProductList";
 import SectionBase from "./SectionBase";
 
-function ProductSection({ title, products, page = "products", options, CardComponent}) {
+function ProductSection({ title, products, page = "products", CardComponent }) {
 
 
     return (
         <>
-        <SectionBase title={title}>
-            <div className="cards-container">
-                    <ProductList products={products} options={options} page={page} CardComponent={CardComponent}/>
-            </div>
-        </SectionBase>
+            <SectionBase title={title}>
+                <div className="cards-container">
+                    <ProductList products={products} page={page} CardComponent={CardComponent} />
+                </div>
+            </SectionBase>
         </>
     )
 }

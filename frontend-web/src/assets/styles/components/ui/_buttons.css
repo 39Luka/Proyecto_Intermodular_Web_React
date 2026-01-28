@@ -1,0 +1,66 @@
+/* ===== Buttons ===== */
+.button {
+    font-family: var(--font-heading);
+    font-size: var(--text-b1);
+    line-height: var(--text-b1-line);
+    padding: 0.6rem 1.2rem;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+    box-shadow: none;
+    text-decoration: none;
+    border-radius: 20px;
+    /* Default style restoration from .boton */
+    background-color: var(--color-secondary500);
+    color: var(--color-neutral100);
+}
+
+/* Variants */
+.button--primary {
+    background-color: var(--color-primary600);
+    color: var(--color-neutral100);
+    border-radius: 24px;
+    /* Maintaining original radius difference */
+}
+
+.button--secondary {
+    background-color: var(--color-secondary500);
+    color: var(--color-neutral100);
+}
+
+.button:hover,
+.button--primary:hover,
+.button--secondary:hover {
+    opacity: 0.9;
+}
+
+.button.active,
+.button--active {
+    background-color: var(--color-primary600);
+    color: var(--color-neutral100);
+}
+
+/* Button-like element reset if needed */
+button {
+    font-family: inherit;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.button--text {
+    background-color: transparent !important;
+    color: var(--color-primary600) !important;
+    /* Make it match theme color instead of secondary */
+    padding: 0;
+    box-shadow: none;
+    font-weight: 700;
+}
+
+.button--text:hover {
+    opacity: 0.8;
+    background-color: transparent !important;
+    text-decoration: underline;
+    color: var(--color-primary700) !important;
+}
