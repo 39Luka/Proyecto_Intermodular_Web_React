@@ -30,7 +30,7 @@
  */
 export const LOGIN_VALIDATION_SCHEMA = {
     email: ['required', 'email'],
-    password: ['required', { type: 'minLength', value: 6 }]
+    password: ['required', { type: 'minLength', value: 1 }]
 };
 
 /**

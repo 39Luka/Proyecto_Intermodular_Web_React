@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { productService } from "../services/productService";
 
 /**
- * Hook to fetch all products.
+ * Hook to fetch all products, optionally filtered by category.
+ * @param {number|string} [categoryId] - Optional category ID to filter by.
  * @returns {{ products: Array, loading: boolean, error: string|null }}
  */
-export function useProducts() {
+export function useProducts(categoryId = null) {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -14,7 +15,7 @@ export function useProducts() {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
-                const data = await productService.getAllProducts();
+                const data = await productService.getAllProducts(categoryId);
                 setProducts(data);
             } catch (err) {
                 console.error("Failed to fetch products", err);
@@ -25,6 +26,34 @@ export function useProducts() {
         };
 
         fetchProducts();
+    }, [categoryId]);
+
+    return { products, loading, error };
+}
+
+/**
+ * Hook to fetch top selling products.
+ */
+export function useTopSelling() {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchTopSelling = async () => {
+            try {
+                setLoading(true);
+                const data = await productService.getTopSelling();
+                setProducts(data);
+            } catch (err) {
+                console.error("Failed to fetch top selling products", err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTopSelling();
     }, []);
 
     return { products, loading, error };

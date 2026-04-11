@@ -9,7 +9,7 @@ function Header() {
       <div className="header__container">
         <h1 className="header__logo">Mi Logo</h1>
         <Nav />
-        <button className="button button--text" onClick={logout} style={{ marginLeft: 'auto' }}>
+        <button className="button button--text ml-auto" onClick={logout}>
           Cerrar sesión
         </button>
       </div>

@@ -11,7 +11,7 @@ function AppContent() {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>Cargando...</div>;
+    return <div className="full-page-loader">Cargando...</div>;
   }
 
   if (!isAuthenticated) {
@@ -33,10 +33,14 @@ function AppContent() {
   );
 }
 
+import { CartProvider } from './context/CartContext';
+
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
     </AuthProvider>
   );
 }

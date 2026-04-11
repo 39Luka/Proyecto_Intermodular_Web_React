@@ -2,70 +2,74 @@ import { formatStatus } from "./formatters";
 
 /**
  * Maps a backend product object to the frontend product structure.
- * @param {object} backendProduct - The product object from the API.
- * @returns {object|null} - The mapped product object for the frontend.
+ * The new API uses English field names: name, description, price, stock, active, category.
  */
 export const mapProduct = (backendProduct) => {
     if (!backendProduct) return null;
     return {
         ...backendProduct,
-        title: backendProduct.nombre || "Producto sin nombre",
-        price: backendProduct.precio ?? 0,
-        description: backendProduct.descripcion || "",
-        image: backendProduct.image || "https://via.placeholder.com/140x140/e5e7eb/6b7280?text=Producto"
+        // Support both old (nombre/precio) and new (name/price) API field names
+        title: backendProduct.name || backendProduct.nombre || "Producto sin nombre",
+        price: backendProduct.price ?? backendProduct.precio ?? 0,
+        description: backendProduct.description || backendProduct.descripcion || "",
+        stock: backendProduct.stock ?? null,
+        active: backendProduct.active ?? true,
+        category: backendProduct.category || null,
+        image: backendProduct.imageUrl || backendProduct.image ||
+            "https://via.placeholder.com/140x140/e5e7eb/6b7280?text=Producto",
     };
 };
 
 /**
- * Maps a backend promotion object to the frontend promotion structure.
- * @param {object} backendPromo - The promotion object from the API.
- * @returns {object|null} - The mapped promotion object for the frontend.
+ * Maps a backend promotion object to the frontend structure.
+ * The new API returns percentage promotions with discountPercentage.
  */
 export const mapPromotion = (backendPromo) => {
     if (!backendPromo) return null;
+    const discount = backendPromo.discountPercentage ?? backendPromo.descuento ?? null;
     return {
         ...backendPromo,
-        title: backendPromo.descripcion || "Promoción sin título",
-        description: backendPromo.descuento != null ? `Descuento: ${backendPromo.descuento}%` : "Descuento: N/A",
-        detailRight: backendPromo.fechaFin || "",
-        detailLeft: "Oferta Especial"
+        title: backendPromo.name || backendPromo.descripcion || "Promoción sin título",
+        description: discount != null ? `Descuento: ${discount}%` : "Descuento: N/A",
+        detailRight: backendPromo.endDate || backendPromo.fechaFin || "",
+        detailLeft: "Oferta Especial",
+        discountPercentage: discount,
     };
 };
 
 /**
- * Maps a backend purchase object to the frontend purchase structure.
- * @param {object} backendPurchase - The purchase object from the API.
- * @returns {object|null} - The mapped purchase object for the frontend.
+ * Maps a backend purchase object to the frontend structure.
+ * The new API uses status values like PENDING, PAID, CANCELLED.
  */
 export const mapPurchase = (backendPurchase) => {
     if (!backendPurchase) return null;
     return {
         ...backendPurchase,
         id: backendPurchase.id,
-        title: backendPurchase.fecha || "Fecha no disponible",
-        description: `Estado: ${formatStatus(backendPurchase.estado) || "Desconocido"}`,
+        title: backendPurchase.createdAt || backendPurchase.fecha || "Fecha no disponible",
+        description: `Estado: ${formatStatus(backendPurchase.status || backendPurchase.estado) || "Desconocido"}`,
         detailRight: `ID: ${backendPurchase.id ?? "N/A"}`,
         detailLeft: "",
-        items: Array.isArray(backendPurchase.detalles)
-            ? backendPurchase.detalles
-            : Array.isArray(backendPurchase.productos)
-                ? backendPurchase.productos
-                : []
+        items: Array.isArray(backendPurchase.items)
+            ? backendPurchase.items
+            : Array.isArray(backendPurchase.detalles)
+                ? backendPurchase.detalles
+                : [],
     };
 };
 
 /**
- * Maps a backend purchase detail object to the frontend structure.
- * @param {object} backendDetail - The detail object from the API.
- * @returns {object|null} - The mapped detail object.
+ * Maps a backend purchase detail/line item object.
+ * The new API wraps these inside each purchase under items[].
  */
 export const mapPurchaseDetail = (backendDetail) => {
     if (!backendDetail) return null;
     return {
         id: backendDetail.id,
-        purchaseId: backendDetail.compraId,
-        productId: backendDetail.productoId,
-        quantity: backendDetail.cantidad ?? 0,
-        subtotal: backendDetail.subtotal ?? 0
+        purchaseId: backendDetail.purchaseId || backendDetail.compraId,
+        productId: backendDetail.productId || backendDetail.productoId,
+        productName: backendDetail.productName || backendDetail.nombreProducto || "",
+        quantity: backendDetail.quantity ?? backendDetail.cantidad ?? 0,
+        subtotal: backendDetail.subtotal ?? 0,
     };
 };

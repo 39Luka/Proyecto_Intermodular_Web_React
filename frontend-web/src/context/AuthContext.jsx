@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import { authService } from "../services/authService";
 
 export const AuthContext = createContext();
 
@@ -15,33 +16,49 @@ export function AuthProvider({ children }) {
         setLoading(false);
     }, []);
 
-    const login = (email, password) => {
-        // Simulated login
-        const mockUser = {
-            id: 1,
-            name: "Usuario",
-            email: email
+    const login = async (email, password) => {
+        const data = await authService.login(email, password);
+        // API returns { token, ... } — store JWT and user info
+        const token = data.token || data.accessToken || data.jwt;
+        if (!token) throw new Error("No se recibió token del servidor.");
+
+        localStorage.setItem("authToken", token);
+
+        // Build user object from response (adapt fields as needed)
+        const loggedUser = {
+            id: data.id ?? data.userId ?? null,
+            name: data.nombre || data.name || email.split("@")[0],
+            email: data.email || email,
+            role: data.role || data.roles?.[0] || "USER",
         };
-        setUser(mockUser);
-        localStorage.setItem("user", JSON.stringify(mockUser));
-        return Promise.resolve(mockUser);
+        setUser(loggedUser);
+        localStorage.setItem("user", JSON.stringify(loggedUser));
+        return loggedUser;
     };
 
-    const register = (name, email, password) => {
-        // Simulated registration
-        const mockUser = {
-            id: Date.now(),
-            name: name,
-            email: email
+    const register = async (nombre, email, password) => {
+        const data = await authService.register(nombre, email, password);
+        // After register, auto-login if we get a token
+        const token = data.token || data.accessToken || data.jwt;
+        if (token) {
+            localStorage.setItem("authToken", token);
+        }
+
+        const newUser = {
+            id: data.id ?? null,
+            name: data.nombre || data.name || nombre,
+            email: data.email || email,
+            role: data.role || "USER",
         };
-        setUser(mockUser);
-        localStorage.setItem("user", JSON.stringify(mockUser));
-        return Promise.resolve(mockUser);
+        setUser(newUser);
+        localStorage.setItem("user", JSON.stringify(newUser));
+        return newUser;
     };
 
     const logout = () => {
         setUser(null);
         localStorage.removeItem("user");
+        localStorage.removeItem("authToken");
     };
 
     const value = {
@@ -50,7 +67,7 @@ export function AuthProvider({ children }) {
         loading,
         login,
         register,
-        logout
+        logout,
     };
 
     return (

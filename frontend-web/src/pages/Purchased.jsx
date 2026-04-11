@@ -5,8 +5,8 @@ import { usePurchases } from "../hooks/usePurchases";
 function Purchased() {
     const { purchases, loading, error } = usePurchases();
 
-    if (loading) return <div style={{ textAlign: "center", padding: "2rem" }}>Cargando compras...</div>;
-    if (error) return <div style={{ textAlign: "center", padding: "2rem", color: "red" }}>Error: {error}</div>;
+    if (loading) return <div className="status-message">Cargando compras...</div>;
+    if (error) return <div className="status-message status-message--error">Error: {error}</div>;
 
     return (
         <ProductSection

@@ -1,21 +1,27 @@
-
 import slugify from "slugify";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useProduct } from "../hooks/useProducts";
+import { useCart } from "../context/CartContext";
+import ProductActionCard from "../components/product/ProductActionCard";
 
 function ProductDetail() {
-
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const initialData = location.state?.product;
   const { product, loading, error } = useProduct(id, initialData);
+  const { addToCart } = useCart();
 
-  if (loading) return <div style={{ textAlign: "center", padding: "4rem" }}>Cargando...</div>;
-  if (error) return <div style={{ textAlign: "center", padding: "4rem", color: "red" }}>Error: {error}</div>;
-  if (!product) return <div style={{ textAlign: "center", padding: "4rem" }}>Producto no encontrado</div>;
+  if (loading) return <div className="status-message">Cargando...</div>;
+  if (error) return <div className="status-message status-message--error">Error: {error}</div>;
+  if (!product) return <div className="status-message">Producto no encontrado</div>;
 
-  const name = slugify(product.title || product.nombre, { lower: true, strict: true }) // Fallback for name property change if any
+  const name = slugify(product.title || product.nombre, { lower: true, strict: true })
+
+  const handleAddToCart = () => {
+    addToCart(product, 1);
+    navigate("/cart");
+  };
 
   return (
     <div className="product-detail-wrapper">
@@ -41,7 +47,6 @@ function ProductDetail() {
           <header>
             <h2 className="product-detail__title" id={`title-${name}`}>{product.title}</h2>
             <div className="product-detail__badges">
-              {/* Example cosmetic badge */}
               <span className="badge">Novedad</span>
             </div>
           </header>
@@ -50,25 +55,14 @@ function ProductDetail() {
 
           <div className="product-detail__divider"></div>
 
-          <div className="product-detail__actions">
-            <div className="product-detail__price">
-              <span className="price-label">Precio</span>
-              <span className="price-value">{product.price?.toFixed(2) || "0.00"}€</span>
-            </div>
-
-            <div className="product-detail__stock">
-              <span className="stock-label">Stock</span>
-              <span className="stock-value">{product.stock > 0 ? product.stock : "Agotado"}</span>
-            </div>
-
-            <button className="product-detail__add-to-cart">
-              Añadir al carrito
-            </button>
-          </div>
+          <ProductActionCard 
+            product={product} 
+            onAddToCart={handleAddToCart} 
+          />
         </div>
       </article>
     </div>
   )
 }
 
-export default ProductDetail;
+export default ProductDetail;

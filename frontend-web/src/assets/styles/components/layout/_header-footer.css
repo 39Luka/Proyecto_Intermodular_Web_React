@@ -18,6 +18,7 @@
 
 .header__logo {
     flex-shrink: 0;
+    margin-right: 2rem;
     /* Protect logo from squashing */
 }
 

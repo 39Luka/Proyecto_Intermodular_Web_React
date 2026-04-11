@@ -2,8 +2,10 @@
 @import "./base/_reset.css";
 @import "./base/_typography.css";
 @import "./base/_layout.css";
+@import "./base/_utilities.css";
 
 @import "./components/ui/_buttons.css";
+@import "./components/ui/_states.css";
 @import "./components/cards/_card.css";
 @import "./components/layout/_header-footer.css";
 @import "./components/pages/_product-detail.css";

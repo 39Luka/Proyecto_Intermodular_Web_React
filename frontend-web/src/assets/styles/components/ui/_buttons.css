@@ -64,3 +64,21 @@ button {
     text-decoration: underline;
     color: var(--color-primary700) !important;
 }
+
+.button--success {
+    background-color: var(--color-success500);
+    color: white;
+}
+
+.button--success:hover {
+    background-color: var(--color-success600);
+}
+
+.button--danger {
+    background-color: var(--color-error500);
+    color: white;
+}
+
+.button--danger:hover {
+    background-color: var(--color-error600);
+}

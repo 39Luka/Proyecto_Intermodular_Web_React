@@ -1,0 +1,65 @@
+/* ===== Utilities ===== */
+
+/* Text Alignment */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+/* Colors */
+.text-danger { color: var(--color-error500); }
+.text-success { color: var(--color-success500); }
+.text-muted { color: var(--color-neutral600); }
+
+/* Spacing - Padding */
+.p-1 { padding: 1rem; }
+.p-2 { padding: 2rem; }
+.p-3 { padding: 3rem; }
+.p-4 { padding: 4rem; }
+
+/* Spacing - Margin */
+.mt-05 { margin-top: 0.5rem; }
+.mt-1 { margin-top: 1rem; }
+.mt-2 { margin-top: 2rem; }
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+.pl-1 { padding-left: 1rem; }
+.ml-auto { margin-left: auto; }
+
+/* Text sizes */
+.text-small { font-size: 0.9rem; }
+
+/* Border */
+.border-t { border-top: 1px solid var(--color-neutral200); }
+
+/* Flexbox utilities */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-between { justify-content: space-between; }
+.flex-center { justify-content: center; align-items: center; }
+.items-center { align-items: center; }
+.gap-1 { gap: 1rem; }
+.gap-05 { gap: 0.5rem; }
+
+.whitespace-nowrap { white-space: nowrap; }
+.overflow-x-auto { overflow-x: auto; }
+
+/* Layout Wrappers */
+.container-narrow {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.full-min-height {
+    min-height: calc(100vh - 160px); /* Adjusting for header/footer */
+}
+
+/* Forms */
+.form-input, .form-select {
+    padding: 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-family: var(--font-body);
+}
+
+.w-60 { width: 60px; }
+.flex-1 { flex: 1; }

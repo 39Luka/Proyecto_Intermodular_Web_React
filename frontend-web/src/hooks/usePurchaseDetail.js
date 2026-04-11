@@ -32,11 +32,11 @@ export function usePurchaseDetail(purchaseId) {
                     // Set details from purchase data using API subtotal
                     const rawItems = purchaseData.items || [];
                     const initialDetails = rawItems.map((item, index) => ({
-                        id: `line-${index}-${item.productoId}`,
+                        id: `line-${index}-${item.productId || item.productoId}`,
                         purchaseId: purchaseId,
-                        productId: item.productoId,
-                        title: item.nombreProducto,
-                        quantity: item.cantidad,
+                        productId: item.productId || item.productoId,
+                        title: item.productName || item.nombreProducto,
+                        quantity: item.quantity ?? item.cantidad,
                         subtotal: item.subtotal // Use subtotal directly from API
                     }));
                     setDetails(initialDetails);

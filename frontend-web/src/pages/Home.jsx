@@ -1,17 +1,17 @@
 import CardVertical from "../components/cards/CardVertical";
 import ProductSection from "../components/sections/ProductSection";
-import { useProducts } from "../hooks/useProducts";
+import { useTopSelling } from "../hooks/useProducts";
 
 function Home() {
-    const { products, loading, error } = useProducts();
+    const { products, loading, error } = useTopSelling();
 
-    if (loading) return <div style={{ textAlign: "center", padding: "2rem" }}>Cargando productos...</div>;
-    if (error) return <div style={{ textAlign: "center", padding: "2rem", color: "red" }}>Error: {error}</div>;
+    if (loading) return <div className="status-message">Cargando productos...</div>;
+    if (error) return <div className="status-message status-message--error">Error: {error}</div>;
 
     return (
         <>
             <ProductSection
-                title="Inicio"
+                title="Lo más vendido"
                 products={products}
                 CardComponent={CardVertical}
             />
