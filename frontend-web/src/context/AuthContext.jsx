@@ -3,11 +3,56 @@ import { authService } from "../services/authService";
 
 export const AuthContext = createContext();
 
+/**
+ * Decodes a JWT token payload without any external library.
+ * Uses atob (base64) to decode the middle part of the JWT.
+ * @param {string} token - JWT token string
+ * @returns {object|null} Decoded payload or null if invalid
+ */
+function decodeJWT(token) {
+    try {
+        const parts = token.split(".");
+        if (parts.length !== 3) return null;
+        // Base64url → Base64: replace - with + and _ with /
+        const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+        const jsonPayload = decodeURIComponent(
+            atob(base64)
+                .split("")
+                .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+                .join("")
+        );
+        return JSON.parse(jsonPayload);
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Builds a user object from a JWT token.
+ * The Bakery API JWT payload contains: sub (email), role, exp, iat.
+ * @param {string} token
+ * @param {string} [fallbackEmail]
+ * @returns {object} user object with id, email, name, role
+ */
+function buildUserFromToken(token, fallbackEmail = "") {
+    const payload = decodeJWT(token);
+    const email = payload?.sub || payload?.email || fallbackEmail;
+    const role = payload?.role || payload?.roles?.[0] || "USER";
+    // The JWT may include userId; otherwise we'll fetch it separately if needed
+    const id = payload?.userId || payload?.id || null;
+    return {
+        id,
+        email,
+        name: email.split("@")[0],
+        role,
+    };
+}
+
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Check localStorage on mount
+    // Restore session from localStorage on mount
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -17,39 +62,29 @@ export function AuthProvider({ children }) {
     }, []);
 
     const login = async (email, password) => {
+        // API returns only { token }
         const data = await authService.login(email, password);
-        // API returns { token, ... } — store JWT and user info
         const token = data.token || data.accessToken || data.jwt;
         if (!token) throw new Error("No se recibió token del servidor.");
 
         localStorage.setItem("authToken", token);
 
-        // Build user object from response (adapt fields as needed)
-        const loggedUser = {
-            id: data.id ?? data.userId ?? null,
-            name: data.nombre || data.name || email.split("@")[0],
-            email: data.email || email,
-            role: data.role || data.roles?.[0] || "USER",
-        };
+        // Decode the JWT to extract user info (sub=email, role)
+        const loggedUser = buildUserFromToken(token, email);
         setUser(loggedUser);
         localStorage.setItem("user", JSON.stringify(loggedUser));
         return loggedUser;
     };
 
-    const register = async (nombre, email, password) => {
-        const data = await authService.register(nombre, email, password);
-        // After register, auto-login if we get a token
+    const register = async (email, password) => {
+        // API RegisterRequest only accepts { email, password }
+        const data = await authService.register(email, password);
         const token = data.token || data.accessToken || data.jwt;
-        if (token) {
-            localStorage.setItem("authToken", token);
-        }
+        if (!token) throw new Error("No se recibió token del servidor.");
 
-        const newUser = {
-            id: data.id ?? null,
-            name: data.nombre || data.name || nombre,
-            email: data.email || email,
-            role: data.role || "USER",
-        };
+        localStorage.setItem("authToken", token);
+
+        const newUser = buildUserFromToken(token, email);
         setUser(newUser);
         localStorage.setItem("user", JSON.stringify(newUser));
         return newUser;
@@ -61,9 +96,12 @@ export function AuthProvider({ children }) {
         localStorage.removeItem("authToken");
     };
 
+    const isAdmin = user?.role === "ADMIN";
+
     const value = {
         user,
         isAuthenticated: !!user,
+        isAdmin,
         loading,
         login,
         register,

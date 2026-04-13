@@ -1,4 +1,6 @@
-const API_BASE_URL = "https://proyectointermodularapi-production.up.railway.app";
+// En desarrollo, las peticiones pasan por el proxy de Vite (evita CORS).
+// El proxy reescribe /api/** → https://proyectointermodularapi-production.up.railway.app/**
+const API_BASE_URL = "/api";
 
 /**
  * Helper function to handle API requests.

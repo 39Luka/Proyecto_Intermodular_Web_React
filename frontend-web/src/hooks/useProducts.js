@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { productService } from "../services/productService";
 
 /**
- * Hook to fetch all products, optionally filtered by category.
+ * Hook to fetch all products, optionally filtered by category and paginated.
  * @param {number|string} [categoryId] - Optional category ID to filter by.
+ * @param {number} [page] - Page number (0-indexed).
+ * @param {number} [size] - Page size.
  * @returns {{ products: Array, loading: boolean, error: string|null }}
  */
-export function useProducts(categoryId = null) {
+export function useProducts(categoryId = null, page = 0, size = 12) {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -15,7 +17,7 @@ export function useProducts(categoryId = null) {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
-                const data = await productService.getAllProducts(categoryId);
+                const data = await productService.getAllProducts(categoryId, page, size);
                 setProducts(data);
             } catch (err) {
                 console.error("Failed to fetch products", err);
@@ -26,7 +28,7 @@ export function useProducts(categoryId = null) {
         };
 
         fetchProducts();
-    }, [categoryId]);
+    }, [categoryId, page, size]);
 
     return { products, loading, error };
 }

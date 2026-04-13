@@ -1,10 +1,10 @@
 import { apiFetch } from "./api";
 
 /**
- * Authenticates a user and returns the JWT token + user info.
+ * Authenticates a user and returns the JWT token { token }.
  * @param {string} email
  * @param {string} password
- * @returns {Promise<{ token: string, user: object }>}
+ * @returns {Promise<{ token: string }>}
  */
 export const authService = {
     login: async (email, password) => {
@@ -15,10 +15,17 @@ export const authService = {
         return data;
     },
 
-    register: async (nombre, email, password) => {
+    /**
+     * Creates a new USER account and returns an access token.
+     * API RegisterRequest only accepts { email, password } — nombre is NOT a valid field.
+     * @param {string} email
+     * @param {string} password
+     * @returns {Promise<{ token: string }>}
+     */
+    register: async (email, password) => {
         const data = await apiFetch("/auth/register", {
             method: "POST",
-            body: JSON.stringify({ nombre, email, password }),
+            body: JSON.stringify({ email, password }),
         }, true); // skipAuth = true (public endpoint)
         return data;
     },

@@ -4,9 +4,17 @@ import { mapPurchase } from "../utils/mappers";
 const extractData = (data) => Array.isArray(data) ? data : (Array.isArray(data?.content) ? data.content : []);
 
 export const purchaseService = {
-    // GET /purchases — my purchases (auth required)
-    getAllPurchases: async () => {
-        const data = await apiFetch("/purchases");
+    /**
+     * Lists purchases. Admins can filter by userId; regular users see their own.
+     * The API requires pageable params (page + size).
+     * @param {number} page
+     * @param {number} size
+     * @param {number|null} userId - Admin-only filter
+     */
+    getAllPurchases: async (page = 0, size = 50, userId = null) => {
+        const params = new URLSearchParams({ page, size });
+        if (userId) params.set("userId", userId);
+        const data = await apiFetch(`/purchases?${params.toString()}`);
         return extractData(data).map(mapPurchase);
     },
 
@@ -17,8 +25,10 @@ export const purchaseService = {
         return mapPurchase(data);
     },
 
-    // POST /purchases — create a new purchase
-    // items: [{ productId, quantity }]
+    /**
+     * Creates a new purchase. Decreases stock and optionally applies a promotion.
+     * @param {Array<{productId: number, quantity: number, promotionId?: number}>} items
+     */
     createPurchase: async (items) => {
         const data = await apiFetch("/purchases", {
             method: "POST",
@@ -27,19 +37,23 @@ export const purchaseService = {
         return data ? mapPurchase(data) : null;
     },
 
-    // PATCH /purchases/{id}/pay
+    /**
+     * Marks a purchase as PAID. Returns 204 No Content.
+     * Only the owner or admin can pay a CREATED purchase.
+     * @param {number} id
+     */
     payPurchase: async (id) => {
-        const data = await apiFetch(`/purchases/${id}/pay`, {
-            method: "PATCH",
-        });
-        return data ? mapPurchase(data) : null;
+        // Returns 204 No Content — no body to map
+        await apiFetch(`/purchases/${id}/pay`, { method: "PATCH" });
     },
 
-    // PATCH /purchases/{id}/cancel
+    /**
+     * Cancels a purchase. Restores stock and releases promotion usage. Returns 204.
+     * Only the owner or admin can cancel a CREATED purchase.
+     * @param {number} id
+     */
     cancelPurchase: async (id) => {
-        const data = await apiFetch(`/purchases/${id}/cancel`, {
-            method: "PATCH",
-        });
-        return data ? mapPurchase(data) : null;
+        // Returns 204 No Content — no body to map
+        await apiFetch(`/purchases/${id}/cancel`, { method: "PATCH" });
     },
 };

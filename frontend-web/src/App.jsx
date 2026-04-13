@@ -8,20 +8,10 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 
 function AppContent() {
-  const { isAuthenticated, loading } = useAuth();
+  const { loading } = useAuth();
 
   if (loading) {
     return <div className="full-page-loader">Cargando...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    );
   }
 
   return (
