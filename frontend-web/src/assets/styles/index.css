@@ -11,3 +11,6 @@
 @import "./components/pages/_product-detail.css";
 @import "./components/pages/_purchase-detail.css";
 @import "./components/pages/_auth.css";
+@import "./components/pages/_commerce.css";
+@import "./components/pages/_showcase.css";
+@import "./components/pages/_admin.css";

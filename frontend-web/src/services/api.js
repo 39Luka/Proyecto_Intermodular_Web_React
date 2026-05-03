@@ -1,13 +1,43 @@
-// En desarrollo, las peticiones pasan por el proxy de Vite (evita CORS).
-// El proxy reescribe /api/** → https://proyectointermodularapi-production.up.railway.app/**
-const API_BASE_URL = "/api";
+const DEFAULT_API_BASE_URL = "https://proyectointermodularapi-production.up.railway.app";
+const ENV_API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.trim();
+const API_BASE_URL = (ENV_API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/+$/, "");
+
+function buildUrl(endpoint) {
+    if (!endpoint) return API_BASE_URL;
+    if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) return endpoint;
+    return `${API_BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+}
+
+async function parseErrorResponse(response) {
+    let errorMessage = `Error ${response.status}: ${response.statusText}`;
+
+    try {
+        const errorData = await response.json();
+        if (errorData?.message) {
+            errorMessage = errorData.message;
+        }
+    } catch {
+        try {
+            const text = await response.text();
+            if (text) errorMessage = text;
+        } catch {
+            // Ignore parsing fallback errors
+        }
+    }
+
+    if (response.status === 401 || response.status === 403) {
+        return "No autorizado. Inicia sesion y vuelve a intentarlo.";
+    }
+
+    return errorMessage;
+}
 
 /**
- * Helper function to handle API requests.
- * @param {string} endpoint - The endpoint to append to the base URL (e.g., "/productos").
- * @param {object} [options={}] - Fetch options.
- * @param {boolean} [skipAuth=false] - Skip attaching auth token.
- * @returns {Promise<any>} - The JSON response.
+ * Makes HTTP requests to the backend API.
+ * @param {string} endpoint
+ * @param {RequestInit} [options]
+ * @param {boolean} [skipAuth]
+ * @returns {Promise<any>}
  */
 export async function apiFetch(endpoint, options = {}, skipAuth = false) {
     const headers = {
@@ -17,44 +47,21 @@ export async function apiFetch(endpoint, options = {}, skipAuth = false) {
 
     if (!skipAuth) {
         const token = localStorage.getItem("authToken");
-        if (token) {
-            headers["Authorization"] = `Bearer ${token}`;
-        }
+        if (token) headers.Authorization = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(buildUrl(endpoint), {
         ...options,
         headers,
     });
 
     if (!response.ok) {
-        let errorMessage = `Error ${response.status}: ${response.statusText}`;
-
-        try {
-            const errorData = await response.json();
-            if (errorData?.message) errorMessage = errorData.message;
-        } catch {
-            // fallback a texto plano si no hay JSON
-            try {
-                const text = await response.text();
-                if (text) errorMessage = text;
-            } catch {
-                // no hay nada
-            }
-        }
-
-        // Manejo específico de auth
-        if (response.status === 401 || response.status === 403) {
-            errorMessage = "No autorizado. Por favor inicia sesión.";
-        }
-
-        throw new Error(errorMessage);
+        const message = await parseErrorResponse(response);
+        throw new Error(message);
     }
 
-    // 204 No Content
     if (response.status === 204) return null;
 
-    // Intentar devolver JSON, fallback a texto
     try {
         return await response.json();
     } catch {

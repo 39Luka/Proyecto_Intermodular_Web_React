@@ -1,14 +1,10 @@
-import { formatStatus, formatDate, formatPrice } from "./formatters";
+import { formatDate, formatPrice, formatStatus } from "./formatters";
 
-/**
- * Maps a backend product object to the frontend product structure.
- * The API uses English field names: name, description, price, stock, active, categoryId.
- */
 export const mapProduct = (backendProduct) => {
     if (!backendProduct) return null;
+
     return {
         ...backendProduct,
-        // Support both old (nombre/precio) and new (name/price) API field names
         title: backendProduct.name || backendProduct.nombre || "Producto sin nombre",
         price: backendProduct.price ?? backendProduct.precio ?? 0,
         description: backendProduct.description || backendProduct.descripcion || "",
@@ -20,37 +16,30 @@ export const mapProduct = (backendProduct) => {
     };
 };
 
-/**
- * Maps a backend promotion object to the frontend structure.
- * API PromotionResponse fields: id, description, type, startDate, endDate, active,
- * productId, productName, discountPercentage.
- */
-export const mapPromotion = (backendPromo) => {
-    if (!backendPromo) return null;
-    const discount = backendPromo.discountPercentage ?? null;
+export const mapPromotion = (backendPromotion) => {
+    if (!backendPromotion) return null;
+
+    const discount = backendPromotion.discountPercentage ?? null;
     return {
-        ...backendPromo,
-        // The API field is `description`, not `name` or `descripcion`
-        title: backendPromo.description || "Promoción sin título",
+        ...backendPromotion,
+        title: backendPromotion.description || "Promocion sin titulo",
         description: discount != null ? `Descuento: ${discount}%` : "Descuento: N/A",
-        detailRight: backendPromo.endDate ? `Hasta: ${formatDate(backendPromo.endDate)}` : "",
-        detailLeft: backendPromo.productName || "Oferta Especial",
+        detailRight: backendPromotion.endDate ? `Hasta: ${formatDate(backendPromotion.endDate)}` : "",
+        detailLeft: backendPromotion.productName || "Oferta especial",
         discountPercentage: discount,
     };
 };
 
-/**
- * Maps a backend purchase object to the frontend structure.
- * API PurchaseResponse status values: CREATED, PAID, CANCELLED.
- */
 export const mapPurchase = (backendPurchase) => {
     if (!backendPurchase) return null;
+
     const statusLabel = formatStatus(backendPurchase.status);
     const dateLabel = backendPurchase.createdAt ? formatDate(backendPurchase.createdAt) : "Fecha no disponible";
+
     return {
         ...backendPurchase,
         id: backendPurchase.id,
-        title: `Compra #${backendPurchase.id} — ${dateLabel}`,
+        title: `Compra #${backendPurchase.id} - ${dateLabel}`,
         description: `Estado: ${statusLabel}`,
         detailRight: backendPurchase.total != null ? `Total: ${formatPrice(backendPurchase.total)}` : "",
         detailLeft: statusLabel,
@@ -62,13 +51,9 @@ export const mapPurchase = (backendPurchase) => {
     };
 };
 
-/**
- * Maps a backend purchase line item object.
- * API PurchaseItemResponse fields: productId, productName, quantity, unitPrice,
- * discountAmount, subtotal, promotionId.
- */
 export const mapPurchaseDetail = (backendDetail) => {
     if (!backendDetail) return null;
+
     return {
         id: backendDetail.id,
         purchaseId: backendDetail.purchaseId || backendDetail.compraId,

@@ -1,56 +1,48 @@
 import { Link } from "react-router-dom";
 
-/**
- * AdminDashboard - Página principal de administración.
- * Ofrece una visión general y accesos rápidos a los diferentes módulos de gestión.
- */
-function AdminDashboard() {
-    const adminModules = [
-        {
-            title: "Productos",
-            description: "Gestionar el catálogo, stock y precios.",
-            path: "/admin/products",
-            icon: "🥖"
-        },
-        {
-            title: "Categorías",
-            description: "Organizar productos por tipos.",
-            path: "/admin/categories",
-            icon: "📁"
-        },
-        {
-            title: "Promociones",
-            description: "Gestionar descuentos y ofertas activas.",
-            path: "/admin/promotions",
-            icon: "🏷️"
-        },
-        {
-            title: "Usuarios",
-            description: "Administrar cuentas y permisos.",
-            path: "/admin/users",
-            icon: "👥"
-        }
-    ];
+const adminModules = [
+    {
+        title: "Productos",
+        description: "Gestiona catalogo, stock y precios.",
+        path: "/admin/products",
+    },
+    {
+        title: "Categorias",
+        description: "Organiza tus productos por tipo.",
+        path: "/admin/categories",
+    },
+    {
+        title: "Promociones",
+        description: "Crea ofertas y activa o desactiva campañas.",
+        path: "/admin/promotions",
+    },
+    {
+        title: "Usuarios",
+        description: "Busca cuentas y cambia su estado.",
+        path: "/admin/users",
+    },
+];
 
+function AdminDashboard() {
     return (
-        <div className="admin-dashboard">
-            <header className="admin-header">
-                <h1>Panel de Gestión</h1>
-                <p>Bienvenido al obrador central. Selecciona un área para comenzar.</p>
+        <section className="admin-page" aria-labelledby="admin-dashboard-title">
+            <header className="admin-page-header">
+                <div>
+                    <p className="admin-eyebrow">Administracion</p>
+                    <h1 id="admin-dashboard-title">Panel de administracion</h1>
+                    <p>Selecciona el modulo que quieres gestionar.</p>
+                </div>
             </header>
 
-            <div className="admin-grid">
+            <div className="admin-module-grid" role="list">
                 {adminModules.map((module) => (
-                    <Link to={module.path} key={module.path} className="admin-card">
-                        <span className="admin-card__icon">{module.icon}</span>
-                        <div className="admin-card__content">
-                            <h3>{module.title}</h3>
-                            <p>{module.description}</p>
-                        </div>
+                    <Link key={module.path} to={module.path} className="admin-module-card" role="listitem">
+                        <h2>{module.title}</h2>
+                        <p>{module.description}</p>
                     </Link>
                 ))}
             </div>
-        </div>
+        </section>
     );
 }
 

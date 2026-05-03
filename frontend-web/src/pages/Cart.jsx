@@ -15,7 +15,6 @@ function Cart() {
     const [availablePromotions, setAvailablePromotions] = useState({});
     const [selectedPromotions, setSelectedPromotions] = useState({});
 
-    // Fetch promotions for items in cart
     useEffect(() => {
         const fetchPromos = async () => {
             const newPromos = {};
@@ -24,21 +23,20 @@ function Cart() {
                     try {
                         const promos = await promotionService.getActivePromotions(item.product.id);
                         newPromos[item.product.id] = promos;
-                    } catch (e) {
-                        console.error("Failed fetching promos for", item.product.id);
+                    } catch {
                         newPromos[item.product.id] = [];
                     }
                 }
             }
             if (Object.keys(newPromos).length > 0) {
-                setAvailablePromotions(prev => ({ ...prev, ...newPromos }));
+                setAvailablePromotions((prev) => ({ ...prev, ...newPromos }));
             }
         };
         if (cartItems.length > 0) fetchPromos();
     }, [cartItems, availablePromotions]);
 
     const handlePromoSelect = (productId, promoId) => {
-        setSelectedPromotions(prev => ({
+        setSelectedPromotions((prev) => ({
             ...prev,
             [productId]: promoId !== "" ? parseInt(promoId) : null
         }));
@@ -48,7 +46,7 @@ function Cart() {
         const promoId = selectedPromotions[productId];
         if (!promoId) return 0;
         const promos = availablePromotions[productId];
-        const selectedPromo = promos?.find(p => p.id === parseInt(promoId));
+        const selectedPromo = promos?.find((promo) => promo.id === parseInt(promoId));
         if (selectedPromo && selectedPromo.discountPercentage) {
             return (originalPrice * selectedPromo.discountPercentage) / 100;
         }
@@ -66,19 +64,18 @@ function Cart() {
         if (cartItems.length === 0) return;
         setIsProcessing(true);
         setError(null);
-        
+
         try {
-            const itemsToBuy = cartItems.map(item => ({
+            const itemsToBuy = cartItems.map((item) => ({
                 productId: item.product.id,
                 quantity: item.quantity,
                 promotionId: selectedPromotions[item.product.id] || null
             }));
-            
+
             await purchaseService.createPurchase(itemsToBuy);
             clearCart();
             navigate("/purchased");
         } catch (err) {
-            console.error("Checkout failed:", err);
             setError(err.message || "Error al procesar la compra");
         } finally {
             setIsProcessing(false);
@@ -88,45 +85,55 @@ function Cart() {
     if (cartItems.length === 0) {
         return (
             <div className="empty-state">
-                <h2>Mi Carrito</h2>
-                <p>Tu carrito está vacío.</p>
-                <button className="button" onClick={() => navigate("/products")}>
-                    Ir al Catálogo
+                <h2>Tu carrito esta vacio</h2>
+                <p>Cuando anadas productos aqui, podremos presentar mejor el resumen y el cierre de compra.</p>
+                <button className="button button--primary" onClick={() => navigate("/products")}>
+                    Ir al catalogo
                 </button>
             </div>
         );
     }
 
     return (
-        <div className="cart-container p-2 container-narrow">
-            <div className="cart-header flex flex-between items-center mb-2">
-                <h2>Mi Carrito</h2>
-                <button className="button button--text" onClick={clearCart}>
-                    Vaciar Carrito
-                </button>
-            </div>
-            
-            {error && <div className="text-danger mb-1">{error}</div>}
+        <div className="commerce-page">
+            <section className="page-intro">
+                <p className="page-intro__eyebrow">Checkout</p>
+                <h1 className="page-intro__title">Prepara tu pedido con una experiencia mas clara.</h1>
+                <p className="page-intro__description">
+                    Ajusta cantidades, aplica promociones y revisa el total antes de finalizar la compra.
+                </p>
+            </section>
 
-            <div className="cart-items flex flex-col gap-1">
-                {cartItems.map(item => (
-                    <CartItem 
-                        key={item.product.id}
-                        item={item}
-                        promotions={availablePromotions[item.product.id]}
-                        selectedPromoId={selectedPromotions[item.product.id]}
-                        onPromoChange={handlePromoSelect}
-                        onQuantityChange={updateQuantity}
-                        onRemove={removeFromCart}
-                    />
-                ))}
-            </div>
+            <section className="commerce-stack">
+                <div className="commerce-toolbar">
+                    <h2>Mi carrito</h2>
+                    <button className="button button--secondary" onClick={clearCart}>
+                        Vaciar carrito
+                    </button>
+                </div>
 
-            <CartSummary 
-                total={finalTotal} 
-                onCheckout={handleCheckout} 
-                isProcessing={isProcessing} 
-            />
+                {error && <div className="admin-error-msg">{error}</div>}
+
+                <div className="commerce-stack">
+                    {cartItems.map((item) => (
+                        <CartItem
+                            key={item.product.id}
+                            item={item}
+                            promotions={availablePromotions[item.product.id]}
+                            selectedPromoId={selectedPromotions[item.product.id]}
+                            onPromoChange={handlePromoSelect}
+                            onQuantityChange={updateQuantity}
+                            onRemove={removeFromCart}
+                        />
+                    ))}
+                </div>
+
+                <CartSummary
+                    total={finalTotal}
+                    onCheckout={handleCheckout}
+                    isProcessing={isProcessing}
+                />
+            </section>
         </div>
     );
 }

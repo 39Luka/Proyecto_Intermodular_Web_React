@@ -1,88 +1,188 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { productService } from "../../services/productService";
 import { promotionService } from "../../services/promotionService";
+import { formatDate } from "../../utils/formatters";
 
-/**
- * AdminPromotions - Gestión de promociones activas e inactivas.
- */
+const initialForm = {
+    productId: "",
+    description: "",
+    discountPercentage: "",
+    startDate: "",
+    endDate: "",
+};
+
 function AdminPromotions() {
     const [promotions, setPromotions] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [form, setForm] = useState(initialForm);
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
-        fetchPromotions();
+        loadData();
     }, []);
 
-    const fetchPromotions = async () => {
+    async function loadData() {
         try {
             setLoading(true);
-            const data = await promotionService.getAllPromotions();
-            setPromotions(data);
+            setError("");
+            const [promotionsData, productsData] = await Promise.all([
+                promotionService.getAllPromotions(),
+                productService.getAllProducts(),
+            ]);
+            setPromotions(promotionsData);
+            setProducts(productsData);
         } catch (err) {
-            console.error("Error al cargar promociones", err);
+            setError(err.message || "No se pudieron cargar las promociones.");
         } finally {
             setLoading(false);
         }
-    };
+    }
 
-    const handleToggleActive = async (id, currentStatus) => {
+    function handleChange(event) {
+        const { name, value } = event.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+    }
+
+    async function handleCreate(event) {
+        event.preventDefault();
+        setSaving(true);
+        setError("");
+        setMessage("");
+
         try {
-            await promotionService.patchPromotion(id, !currentStatus);
-            setPromotions(prev => 
-                prev.map(p => p.id === id ? { ...p, active: !currentStatus } : p)
-            );
+            const payload = {
+                productId: Number(form.productId),
+                description: form.description.trim(),
+                discountPercentage: Number(form.discountPercentage),
+                startDate: form.startDate,
+                endDate: form.endDate,
+            };
+
+            const created = await promotionService.createPercentagePromotion(payload);
+            setPromotions((prev) => [created, ...prev]);
+            setForm(initialForm);
+            setMessage("Promocion creada correctamente.");
         } catch (err) {
-            alert("No se pudo cambiar el estado de la promoción.");
-            console.error(err);
+            setError(err.message || "No se pudo crear la promocion.");
+        } finally {
+            setSaving(false);
         }
-    };
+    }
+
+    async function handleToggleActive(promotion) {
+        try {
+            await promotionService.patchPromotion(promotion.id, !promotion.active);
+            setPromotions((prev) =>
+                prev.map((item) => (
+                    item.id === promotion.id ? { ...item, active: !promotion.active } : item
+                ))
+            );
+            setMessage("Estado de promocion actualizado.");
+        } catch (err) {
+            setError(err.message || "No se pudo actualizar la promocion.");
+        }
+    }
 
     if (loading) return <div className="admin-loading">Cargando promociones...</div>;
 
     return (
-        <div className="admin-page">
+        <section className="admin-page admin-stack" aria-labelledby="admin-promotions-title">
             <header className="admin-page-header">
                 <div>
-                    <Link to="/admin" className="back-link">← Volver al Panel</Link>
-                    <h1>Gestión de Promociones</h1>
+                    <Link to="/admin" className="back-link">Volver al panel</Link>
+                    <h1 id="admin-promotions-title">Gestion de promociones</h1>
                 </div>
-                {/* Por ahora no implementamos el formulario complejo de creación para abreviar */}
-                <span className="info-badge">Nuevas promociones vía API</span>
             </header>
+
+            {error && <p className="admin-error-msg" role="alert">{error}</p>}
+            {message && <p className="admin-success-msg" aria-live="polite">{message}</p>}
+
+            <form className="admin-form-card admin-stack" onSubmit={handleCreate}>
+                <h2>Nueva promocion</h2>
+                <div className="admin-form-grid">
+                    <div className="admin-form-field">
+                        <label htmlFor="productId">Producto</label>
+                        <select id="productId" name="productId" value={form.productId} onChange={handleChange} required>
+                            <option value="">Selecciona un producto</option>
+                            {products.map((product) => (
+                                <option key={product.id} value={product.id}>{product.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="admin-form-field">
+                        <label htmlFor="discountPercentage">Descuento (%)</label>
+                        <input
+                            id="discountPercentage"
+                            name="discountPercentage"
+                            type="number"
+                            min="1"
+                            max="100"
+                            value={form.discountPercentage}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="admin-form-field">
+                        <label htmlFor="startDate">Fecha inicio</label>
+                        <input id="startDate" name="startDate" type="date" value={form.startDate} onChange={handleChange} required />
+                    </div>
+
+                    <div className="admin-form-field">
+                        <label htmlFor="endDate">Fecha fin</label>
+                        <input id="endDate" name="endDate" type="date" value={form.endDate} onChange={handleChange} required />
+                    </div>
+                </div>
+
+                <div className="admin-form-field">
+                    <label htmlFor="description">Descripcion</label>
+                    <textarea id="description" name="description" rows="3" value={form.description} onChange={handleChange} required />
+                </div>
+
+                <div className="admin-actions">
+                    <button type="submit" className="button button--primary" disabled={saving}>
+                        {saving ? "Guardando..." : "Crear promocion"}
+                    </button>
+                </div>
+            </form>
 
             <div className="admin-table-wrapper">
                 <table className="admin-table">
+                    <caption className="sr-only">Tabla de promociones</caption>
                     <thead>
                         <tr>
-                            <th>Descripción</th>
-                            <th>Descuento</th>
-                            <th>Vigencia</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                            <th scope="col">Descripcion</th>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Descuento</th>
+                            <th scope="col">Vigencia</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {promotions.map((promo) => (
-                            <tr key={promo.id}>
+                        {promotions.map((promotion) => (
+                            <tr key={promotion.id}>
+                                <th scope="row">{promotion.description}</th>
+                                <td>{promotion.productName || `#${promotion.productId}`}</td>
+                                <td>{promotion.discountPercentage}%</td>
+                                <td>{formatDate(promotion.startDate)} - {formatDate(promotion.endDate)}</td>
                                 <td>
-                                    <strong>{promo.description}</strong>
-                                    <div style={{fontSize: '0.8rem', color: '#666'}}>ID Producto: {promo.productId}</div>
-                                </td>
-                                <td>{promo.discountPercentage}%</td>
-                                <td style={{fontSize: '0.85rem'}}>
-                                    {new Date(promo.startDate).toLocaleDateString()} - {new Date(promo.endDate).toLocaleDateString()}
-                                </td>
-                                <td>
-                                    <span className={`status-pill ${promo.active ? 'active' : 'inactive'}`}>
-                                        {promo.active ? "Activa" : "Inactiva"}
+                                    <span className={`status-pill ${promotion.active ? "active" : "inactive"}`}>
+                                        {promotion.active ? "Activa" : "Inactiva"}
                                     </span>
                                 </td>
                                 <td>
-                                    <button 
-                                        onClick={() => handleToggleActive(promo.id, promo.active)}
-                                        className={`action-btn ${promo.active ? 'delete' : 'edit'}`}
+                                    <button
+                                        type="button"
+                                        className="button button--text"
+                                        onClick={() => handleToggleActive(promotion)}
                                     >
-                                        {promo.active ? "Desactivar" : "Activar"}
+                                        {promotion.active ? "Desactivar" : "Activar"}
                                     </button>
                                 </td>
                             </tr>
@@ -90,26 +190,7 @@ function AdminPromotions() {
                     </tbody>
                 </table>
             </div>
-
-            <style>{`
-                .status-pill {
-                    padding: 0.2rem 0.6rem;
-                    border-radius: 9999px;
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    text-transform: uppercase;
-                }
-                .status-pill.active { background: #dcfce7; color: #166534; }
-                .status-pill.inactive { background: #f3f4f6; color: #4b5563; }
-                .info-badge {
-                    background: #eff6ff;
-                    color: #1d4ed8;
-                    padding: 0.5rem 1rem;
-                    border-radius: 0.5rem;
-                    font-size: 0.85rem;
-                }
-            `}</style>
-        </div>
+        </section>
     );
 }
 

@@ -23,7 +23,7 @@ function PurchaseDetail() {
     };
 
     const handleCancel = async () => {
-        if (!window.confirm("¿Estás seguro de cancelar esta compra?")) return;
+        if (!window.confirm("Estas seguro de cancelar esta compra?")) return;
         try {
             const { purchaseService } = await import("../services/purchaseService");
             await purchaseService.cancelPurchase(id);
@@ -38,27 +38,37 @@ function PurchaseDetail() {
     };
 
     return (
-        <div className="purchase-detail-wrapper">
-            <div className="purchase-detail-header">
-                <h1 className="purchase-detail-title">Detalle de Compra</h1>
-                <button className="button button--text" onClick={() => navigate(-1)}>
-                    ← Volver
-                </button>
-            </div>
+        <div className="commerce-page">
+            <section className="page-intro">
+                <p className="page-intro__eyebrow">Seguimiento</p>
+                <h1 className="page-intro__title">Detalle de compra con informacion mejor ordenada.</h1>
+                <p className="page-intro__description">
+                    Estado, productos y acciones de la compra dentro de una vista mas clara y mas util.
+                </p>
+            </section>
 
-            <div className="purchase-detail-container">
-                <PurchaseInfo 
-                    purchase={purchase} 
-                    details={details} 
-                    onPay={handlePay} 
-                    onCancel={handleCancel} 
-                />
-                
-                <PurchaseLines 
-                    details={details} 
-                    productsMap={productsMap} 
-                    onNavigate={handleNavigateToProduct} 
-                />
+            <div className="purchase-detail-wrapper">
+                <div className="purchase-detail-header">
+                    <h2 className="purchase-detail-title">Compra #{purchase.id}</h2>
+                    <button className="button button--secondary" onClick={() => navigate(-1)}>
+                        Volver
+                    </button>
+                </div>
+
+                <div className="purchase-detail-container">
+                    <PurchaseInfo
+                        purchase={purchase}
+                        details={details}
+                        onPay={handlePay}
+                        onCancel={handleCancel}
+                    />
+
+                    <PurchaseLines
+                        details={details}
+                        productsMap={productsMap}
+                        onNavigate={handleNavigateToProduct}
+                    />
+                </div>
             </div>
         </div>
     );

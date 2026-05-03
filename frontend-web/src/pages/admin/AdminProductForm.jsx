@@ -1,253 +1,155 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
-import { productService } from "../../services/productService";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { categoryService } from "../../services/categoryService";
+import { productService } from "../../services/productService";
 
-/**
- * AdminProductForm - Formulario para añadir o editar productos.
- */
+const initialForm = {
+    name: "",
+    description: "",
+    price: "",
+    stock: "",
+    imageUrl: "",
+    categoryId: "",
+};
+
 function AdminProductForm() {
     const { id } = useParams();
     const navigate = useNavigate();
     const isEditMode = Boolean(id);
 
-    const [formData, setFormData] = useState({
-        name: "",
-        description: "",
-        price: 0,
-        stock: 0,
-        imageUrl: "",
-        categoryId: ""
-    });
-
+    const [formData, setFormData] = useState(initialForm);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(isEditMode);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState("");
 
-    useEffect(() => {
-        fetchCategories();
-        if (isEditMode) {
-            fetchProduct();
-        }
-    }, [id]);
-
-    const fetchCategories = async () => {
+    const loadCategories = useCallback(async () => {
         try {
             const data = await categoryService.getCategories();
             setCategories(data);
         } catch (err) {
-            console.error("Error al cargar categorías", err);
+            setError(err.message || "No se pudieron cargar las categorias.");
         }
-    };
+    }, []);
 
-    const fetchProduct = async () => {
+    const loadProduct = useCallback(async () => {
         try {
+            setFetching(true);
             const product = await productService.getProductById(id);
-            if (product) {
-                setFormData({
-                    name: product.name,
-                    description: product.description,
-                    price: product.price,
-                    stock: product.stock,
-                    imageUrl: product.imageUrl,
-                    categoryId: product.categoryId || ""
-                });
+            if (!product) {
+                setError("Producto no encontrado.");
+                return;
             }
+
+            setFormData({
+                name: product.name || "",
+                description: product.description || "",
+                price: product.price ?? "",
+                stock: product.stock ?? "",
+                imageUrl: product.imageUrl || "",
+                categoryId: product.categoryId || product.category?.id || "",
+            });
         } catch (err) {
-            setError("No se pudo cargar la información del producto.");
+            setError(err.message || "No se pudo cargar el producto.");
         } finally {
             setFetching(false);
         }
-    };
+    }, [id]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: name === "price" || name === "stock" || name === "categoryId" ? Number(value) : value
-        }));
-    };
+    useEffect(() => {
+        loadCategories();
+        if (isEditMode) loadProduct();
+    }, [isEditMode, loadCategories, loadProduct]);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    function handleChange(event) {
+        const { name, value } = event.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
+    async function handleSubmit(event) {
+        event.preventDefault();
         setLoading(true);
-        setError(null);
+        setError("");
+
+        const payload = {
+            ...formData,
+            price: Number(formData.price),
+            stock: Number(formData.stock),
+            categoryId: Number(formData.categoryId),
+        };
 
         try {
             if (isEditMode) {
-                await productService.updateProduct(id, formData);
+                await productService.updateProduct(id, payload);
             } else {
-                await productService.createProduct(formData);
+                await productService.createProduct(payload);
             }
             navigate("/admin/products");
         } catch (err) {
-            setError(err.message || "Error al guardar el producto.");
+            setError(err.message || "No se pudo guardar el producto.");
         } finally {
             setLoading(false);
         }
-    };
+    }
 
-    if (fetching) return <div className="admin-loading">Cargando datos del producto...</div>;
+    if (fetching) return <div className="admin-loading">Cargando producto...</div>;
 
     return (
-        <div className="admin-page">
+        <section className="admin-page admin-stack" aria-labelledby="admin-product-form-title">
             <header className="admin-page-header">
                 <div>
-                    <Link to="/admin/products" className="back-link">← Cancelar y Volver</Link>
-                    <h1>{isEditMode ? "Editar Producto" : "Nuevo Producto"}</h1>
+                    <Link to="/admin/products" className="back-link">Volver a productos</Link>
+                    <h1 id="admin-product-form-title">{isEditMode ? "Editar producto" : "Nuevo producto"}</h1>
                 </div>
             </header>
 
-            <div className="admin-form-container">
-                <form onSubmit={handleSubmit} className="admin-form">
-                    {error && <div className="admin-error-msg">{error}</div>}
+            <form className="admin-form-card admin-stack" onSubmit={handleSubmit} noValidate>
+                {error && <p className="admin-error-msg" role="alert">{error}</p>}
 
-                    <div className="form-group">
-                        <label htmlFor="name">Nombre del Producto</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                            placeholder="Ej. Barra de pan rústica"
-                        />
+                <div className="admin-form-grid">
+                    <div className="admin-form-field">
+                        <label htmlFor="name">Nombre</label>
+                        <input id="name" name="name" value={formData.name} onChange={handleChange} required />
                     </div>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="price">Precio (€)</label>
-                            <input
-                                type="number"
-                                id="price"
-                                name="price"
-                                step="0.01"
-                                value={formData.price}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="stock">Stock Inicial</label>
-                            <input
-                                type="number"
-                                id="stock"
-                                name="stock"
-                                value={formData.stock}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="categoryId">Categoría</label>
-                        <select
-                            id="categoryId"
-                            name="categoryId"
-                            value={formData.categoryId}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Selecciona una categoría</option>
-                            {categories.map(cat => (
-                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    <div className="admin-form-field">
+                        <label htmlFor="categoryId">Categoria</label>
+                        <select id="categoryId" name="categoryId" value={formData.categoryId} onChange={handleChange} required>
+                            <option value="">Selecciona una categoria</option>
+                            {categories.map((category) => (
+                                <option key={category.id} value={category.id}>{category.name}</option>
                             ))}
                         </select>
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="imageUrl">URL de la Imagen</label>
-                        <input
-                            type="url"
-                            id="imageUrl"
-                            name="imageUrl"
-                            value={formData.imageUrl}
-                            onChange={handleChange}
-                            required
-                            placeholder="https://ejemplo.com/imagen.jpg"
-                        />
+                    <div className="admin-form-field">
+                        <label htmlFor="price">Precio</label>
+                        <input id="price" name="price" type="number" step="0.01" min="0" value={formData.price} onChange={handleChange} required />
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="description">Descripción</label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            rows="4"
-                            value={formData.description}
-                            onChange={handleChange}
-                            required
-                            placeholder="Describe el producto, ingredientes, etc."
-                        ></textarea>
+                    <div className="admin-form-field">
+                        <label htmlFor="stock">Stock</label>
+                        <input id="stock" name="stock" type="number" min="0" value={formData.stock} onChange={handleChange} required />
                     </div>
+                </div>
 
-                    <div className="form-actions">
-                        <button type="submit" className="button button--primary" disabled={loading}>
-                            {loading ? "Guardando..." : isEditMode ? "Actualizar Producto" : "Crear Producto"}
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div className="admin-form-field">
+                    <label htmlFor="imageUrl">URL de imagen</label>
+                    <input id="imageUrl" name="imageUrl" type="url" value={formData.imageUrl} onChange={handleChange} required />
+                </div>
 
-            <style>{`
-                .admin-form-container {
-                    background: white;
-                    padding: 2.5rem;
-                    border-radius: 1rem;
-                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                    max-width: 800px;
-                    margin: 0 auto;
-                    border: 1px solid #e5e7eb;
-                }
-                .admin-form {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1.5rem;
-                }
-                .form-group {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.5rem;
-                }
-                .form-row {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 1.5rem;
-                }
-                label {
-                    font-weight: 600;
-                    color: #374151;
-                    font-size: 0.9rem;
-                }
-                input, select, textarea {
-                    padding: 0.75rem;
-                    border: 1px solid #d1d5db;
-                    border-radius: 0.5rem;
-                    font-size: 1rem;
-                    transition: border-color 0.2s, box-shadow 0.2s;
-                }
-                input:focus, select:focus, textarea:focus {
-                    outline: none;
-                    border-color: #5B21B6;
-                    box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.1);
-                }
-                .form-actions {
-                    margin-top: 1rem;
-                    display: flex;
-                    justify-content: flex-end;
-                }
-                .admin-error-msg {
-                    background: #fee2e2;
-                    color: #b91c1c;
-                    padding: 1rem;
-                    border-radius: 0.5rem;
-                    margin-bottom: 1rem;
-                }
-            `}</style>
-        </div>
+                <div className="admin-form-field">
+                    <label htmlFor="description">Descripcion</label>
+                    <textarea id="description" name="description" rows="4" value={formData.description} onChange={handleChange} required />
+                </div>
+
+                <div className="admin-actions">
+                    <button type="submit" className="button button--primary" disabled={loading}>
+                        {loading ? "Guardando..." : isEditMode ? "Actualizar producto" : "Crear producto"}
+                    </button>
+                </div>
+            </form>
+        </section>
     );
 }
 

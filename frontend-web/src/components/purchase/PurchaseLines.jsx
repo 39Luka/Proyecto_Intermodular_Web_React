@@ -1,8 +1,7 @@
 import CardHorizontal from "../cards/CardHorizontal";
 
 function PurchaseLines({ details, productsMap, onNavigate }) {
-    // Map details to card format
-    const cardItems = details.map(line => {
+    const cardItems = details.map((line) => {
         const product = productsMap[line.productId];
         const unitPrice = line.subtotal / line.quantity;
 
@@ -11,18 +10,18 @@ function PurchaseLines({ details, productsMap, onNavigate }) {
             title: line.title || `Producto #${line.productId}`,
             description: product?.description || "",
             image: product?.image || "",
-            detailLeft: `Cantidad: ${line.quantity} × ${unitPrice.toFixed(2)}€`,
-            detailRight: `${line.subtotal?.toFixed(2) || "0.00"}€`
+            detailLeft: `Cantidad ${line.quantity} x ${unitPrice.toFixed(2)} EUR`,
+            detailRight: `${line.subtotal?.toFixed(2) || "0.00"} EUR`
         };
     });
 
     return (
         <section className="purchase-lines">
-            <h2 className="section-title">Productos ({details.length})</h2>
+            <h2 className="section-title">Productos incluidos</h2>
             {details.length === 0 ? (
                 <div className="empty-state">No hay productos en esta compra.</div>
             ) : (
-                <div className="cards-container">
+                <div className="commerce-stack">
                     {cardItems.map((item) => (
                         <CardHorizontal
                             key={item.id}

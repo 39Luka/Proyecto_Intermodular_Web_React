@@ -1,174 +1,167 @@
-/* ===== Cards Container ===== */
 .cards-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
-    margin: 1rem 0 2rem;
+    display: grid;
+    gap: 1.2rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
-/* ===== Card Vertical ===== */
-.card-vertical {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    gap: 0.8rem;
-    min-height: 260px;
-
-    /* Grid/Flex Layout: Allow 4 per row, but stretch to fill */
-    flex: 1 1 240px;
-    /* Fits 4 in ~1100px+ space */
-    max-width: 100%;
-    /* Allow full stretch */
-    width: auto;
-
-    /* Shared Base Styles Duplicate */
-    background: var(--color-bg);
-    border: 2px solid var(--color-border);
-    border-radius: 12px;
+.card-vertical,
+.card-horizontal {
+    border: 1px solid rgba(var(--color-primary200-rgb), 0.58);
+    background:
+        linear-gradient(180deg, rgba(var(--color-neutral100-rgb), 0.96), rgba(var(--color-primary100-rgb), 0.38)),
+        rgba(var(--color-neutral100-rgb), 0.96);
     box-shadow: var(--shadow-card);
-    transition: all 0.25s ease;
-    cursor: pointer;
-    font-family: inherit;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
-.card-vertical:hover {
-    transform: translateY(-4px);
+.card-vertical:hover,
+.card-horizontal:hover {
+    transform: translateY(-5px);
     box-shadow: var(--shadow-card-hover);
+    border-color: rgba(var(--color-primary400-rgb), 0.46);
+}
+
+.card-vertical {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 24px;
+    cursor: pointer;
 }
 
 .card-vertical .card__figure {
     margin: 0;
     width: 100%;
-    aspect-ratio: 4 / 3;
-    /* Reduced height from 1/1 */
-    border-radius: 8px;
+    aspect-ratio: 4 / 4.5;
+    border-radius: 18px;
     overflow: hidden;
+    background: linear-gradient(180deg, rgba(var(--color-primary100-rgb), 0.62), rgba(var(--color-neutral100-rgb), 0.95));
 }
 
 .card-vertical .card__image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px;
 }
 
-.card-vertical .card__content {
-    display: block;
+.card__content {
+    display: grid;
+    gap: 0.55rem;
 }
 
-.card-vertical .card__title {
+.card__eyebrow {
     margin: 0;
-    margin-bottom: 0.3rem;
-    font-size: var(--text-h5);
-    line-height: var(--text-h5-line);
-    color: var(--color-text-primary);
-    text-align: left;
+    font-size: var(--text-b4);
+    line-height: var(--text-b4-line);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-primary500);
+    font-weight: 700;
 }
 
-.card-vertical .card__description {
+.card__title {
+    margin: 0;
+    font-size: var(--text-h5);
+    line-height: 1.2;
+    color: var(--color-secondary600);
+}
+
+.card__description {
     margin: 0;
     font-size: var(--text-b2);
     line-height: var(--text-b2-line);
-    color: var(--color-text-primary);
-    font-weight: var(--font-body-regular);
-    text-align: left;
+    color: var(--color-text-secondary);
 }
 
-/* ===== Card Horizontal ===== */
-.card-horizontal {
+.card__meta {
     display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    gap: 1.5rem;
-    padding: 1.5rem;
-
-    /* Grid/Flex Layout: Allow 2 per row */
-    flex: 1 1 500px;
-    /* Basis 500px, so 2 fit in >1000px (+gap) container */
-    max-width: 100%;
-    /* Allow filling if needed */
-
-    background: var(--color-bg);
-    border: 2px solid var(--color-border);
-    border-radius: 12px;
-    box-shadow: var(--shadow-card);
-    transition: all 0.25s ease;
-    cursor: pointer;
-    font-family: inherit;
-    position: relative;
-    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-top: 0.45rem;
+    border-top: 1px solid rgba(var(--color-primary200-rgb), 0.55);
 }
 
-.card-horizontal:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-card-hover);
+.card__price {
+    color: var(--color-primary600);
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.card__action {
+    color: var(--color-secondary500);
+    font-size: var(--text-b3);
+    font-weight: 700;
+}
+
+.card-horizontal {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.15rem;
+    border-radius: 26px;
+    cursor: pointer;
+}
+
+.card-horizontal.card--static {
+    cursor: default;
 }
 
 .card-horizontal .card__content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 1rem;
-    min-width: 0;
+    gap: 0.8rem;
 }
 
 .card-horizontal .card__header {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.card-horizontal .card__title {
-    margin: 0;
-    font-size: var(--text-h5);
-    line-height: var(--text-h5-line);
-    color: var(--color-text-primary);
-}
-
-.card-horizontal .card__description {
-    margin: 0;
-    font-size: var(--text-b2);
-    line-height: var(--text-b2-line);
-    color: var(--color-text-primary);
-    font-weight: var(--font-body-regular);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    display: grid;
+    gap: 0.45rem;
 }
 
 .card-horizontal .card__footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto;
-    width: 100%;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(var(--color-primary200-rgb), 0.55);
 }
 
 .card-horizontal .card__text-left,
 .card-horizontal .card__text-right {
     margin: 0;
-    font-size: var(--text-b2);
+    font-size: var(--text-b3);
+    line-height: var(--text-b3-line);
     color: var(--color-secondary500);
     font-weight: 700;
 }
 
 .card-horizontal .card__figure {
     margin: 0;
-    width: 140px;
-    height: 140px;
-    flex-shrink: 0;
-    border-radius: 8px;
+    width: 132px;
+    height: 132px;
+    border-radius: 18px;
     overflow: hidden;
-    align-self: center;
+    background: rgba(var(--color-primary100-rgb), 0.82);
 }
 
 .card-horizontal .card__image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .cards-container {
+        grid-template-columns: 1fr;
+    }
+
+    .card-horizontal {
+        grid-template-columns: 1fr;
+    }
+
+    .card-horizontal .card__figure {
+        width: 100%;
+        height: 220px;
+    }
 }

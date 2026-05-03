@@ -1,13 +1,14 @@
 function CartSummary({ total, onCheckout, isProcessing }) {
     return (
-        <div className="cart-summary mt-2 p-1 border-t text-right">
-            <h3>Total a pagar: {total.toFixed(2)}€</h3>
-            <button 
-                className="button button--success mt-1" 
-                onClick={onCheckout} 
+        <div className="commerce-panel cart-summary">
+            <p className="cart-summary__label">Total final</p>
+            <h3 className="cart-summary__total">{total.toFixed(2)} EUR</h3>
+            <button
+                className="button button--primary"
+                onClick={onCheckout}
                 disabled={isProcessing}
             >
-                {isProcessing ? "Procesando..." : "Finalizar Compra"}
+                {isProcessing ? "Procesando..." : "Finalizar compra"}
             </button>
         </div>
     );

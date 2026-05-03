@@ -2,177 +2,174 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { userService } from "../../services/userService";
 
-/**
- * AdminUsers - Búsqueda y gestión de cuentas de usuario.
- * Permite buscar por email y activar/desactivar cuentas.
- */
+const initialCreateForm = {
+    email: "",
+    password: "",
+    role: "USER",
+};
+
 function AdminUsers() {
     const [searchEmail, setSearchEmail] = useState("");
     const [foundUser, setFoundUser] = useState(null);
+    const [createForm, setCreateForm] = useState(initialCreateForm);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
 
-    const handleSearch = async (e) => {
-        e.preventDefault();
-        if (!searchEmail) return;
-
-        setLoading(true);
-        setError(null);
-        setFoundUser(null);
+    async function handleSearch(event) {
+        event.preventDefault();
+        if (!searchEmail.trim()) return;
 
         try {
-            const user = await userService.getUserByEmail(searchEmail);
-            if (user) {
-                setFoundUser(user);
-            } else {
-                setError("No se encontró ningún usuario con ese email.");
-            }
+            setLoading(true);
+            setError("");
+            setMessage("");
+            const user = await userService.getUserByEmail(searchEmail.trim());
+            setFoundUser(user);
         } catch (err) {
-            setError("Error al buscar el usuario. Asegúrate de que el email sea exacto.");
-            console.error(err);
+            setFoundUser(null);
+            setError(err.message || "No se pudo buscar el usuario.");
         } finally {
             setLoading(false);
         }
-    };
+    }
 
-    const handleToggleStatus = async () => {
+    async function handleToggleStatus() {
         if (!foundUser) return;
-        
-        const newStatus = !foundUser.enabled;
+
         try {
-            await userService.patchUser(foundUser.id, newStatus);
-            setFoundUser({ ...foundUser, enabled: newStatus });
-            alert(`Usuario ${newStatus ? "activado" : "desactivado"} con éxito.`);
+            await userService.patchUser(foundUser.id, !foundUser.enabled);
+            setFoundUser((prev) => ({ ...prev, enabled: !prev.enabled }));
+            setMessage("Estado del usuario actualizado.");
         } catch (err) {
-            alert("Error al cambiar el estado del usuario.");
-            console.error(err);
+            setError(err.message || "No se pudo cambiar el estado.");
         }
-    };
+    }
+
+    function handleCreateChange(event) {
+        const { name, value } = event.target;
+        setCreateForm((prev) => ({ ...prev, [name]: value }));
+    }
+
+    async function handleCreateUser(event) {
+        event.preventDefault();
+
+        try {
+            setSaving(true);
+            setError("");
+            setMessage("");
+            const createdUser = await userService.createUser(createForm);
+            setFoundUser(createdUser);
+            setCreateForm(initialCreateForm);
+            setMessage("Usuario creado correctamente.");
+        } catch (err) {
+            setError(err.message || "No se pudo crear el usuario.");
+        } finally {
+            setSaving(false);
+        }
+    }
 
     return (
-        <div className="admin-page">
+        <section className="admin-page admin-stack" aria-labelledby="admin-users-title">
             <header className="admin-page-header">
                 <div>
-                    <Link to="/admin" className="back-link">← Volver al Panel</Link>
-                    <h1>Gestión de Usuarios</h1>
+                    <Link to="/admin" className="back-link">Volver al panel</Link>
+                    <h1 id="admin-users-title">Gestion de usuarios</h1>
                 </div>
             </header>
 
-            <div className="admin-search-container">
-                <div className="search-box">
-                    <h3>Buscar Usuario</h3>
-                    <form onSubmit={handleSearch} className="quick-form">
+            {error && <p className="admin-error-msg" role="alert">{error}</p>}
+            {message && <p className="admin-success-msg" aria-live="polite">{message}</p>}
+
+            <div className="admin-layout-two">
+                <form className="admin-form-card admin-stack" onSubmit={handleSearch}>
+                    <h2>Buscar por email</h2>
+                    <div className="admin-actions">
                         <input
                             type="email"
-                            placeholder="Introduce el email exacto..."
                             value={searchEmail}
-                            onChange={(e) => setSearchEmail(e.target.value)}
+                            onChange={(event) => setSearchEmail(event.target.value)}
+                            placeholder="usuario@dominio.com"
+                            aria-label="Buscar usuario por email"
                             required
                         />
                         <button type="submit" className="button button--primary" disabled={loading}>
                             {loading ? "Buscando..." : "Buscar"}
                         </button>
-                    </form>
-                </div>
+                    </div>
+                </form>
 
-                {error && <div className="admin-error-msg" style={{marginTop: '1rem'}}>{error}</div>}
-
-                {foundUser && (
-                    <div className="admin-user-card" style={{marginTop: '2rem'}}>
-                        <div className="user-card__header">
-                            <div className="user-avatar">
-                                {foundUser.email.charAt(0).toUpperCase()}
-                            </div>
-                            <div className="user-info">
-                                <h3>{foundUser.email}</h3>
-                                <span className="role-tag">{foundUser.role}</span>
-                            </div>
-                        </div>
-                        
-                        <div className="user-card__body">
-                            <div className="info-row">
-                                <span>ID de Usuario:</span>
-                                <strong>{foundUser.id}</strong>
-                            </div>
-                            <div className="info-row">
-                                <span>Estado Actual:</span>
-                                <span className={`status-pill ${foundUser.enabled ? 'active' : 'inactive'}`}>
-                                    {foundUser.enabled ? "Habilitado" : "Deshabilitado"}
-                                </span>
-                            </div>
+                <form className="admin-form-card admin-stack" onSubmit={handleCreateUser}>
+                    <h2>Crear usuario</h2>
+                    <div className="admin-form-grid">
+                        <div className="admin-form-field">
+                            <label htmlFor="new-user-email">Email</label>
+                            <input
+                                id="new-user-email"
+                                name="email"
+                                type="email"
+                                value={createForm.email}
+                                onChange={handleCreateChange}
+                                required
+                            />
                         </div>
 
-                        <div className="user-card__footer">
-                            <button 
-                                onClick={handleToggleStatus}
-                                className={`button ${foundUser.enabled ? 'button--danger' : 'button--success'}`}
-                                style={{width: '100%'}}
+                        <div className="admin-form-field">
+                            <label htmlFor="new-user-role">Rol</label>
+                            <select
+                                id="new-user-role"
+                                name="role"
+                                value={createForm.role}
+                                onChange={handleCreateChange}
                             >
-                                {foundUser.enabled ? "Desactivar Cuenta" : "Activar Cuenta"}
-                            </button>
+                                <option value="USER">USER</option>
+                                <option value="ADMIN">ADMIN</option>
+                            </select>
                         </div>
                     </div>
-                )}
+
+                    <div className="admin-form-field">
+                        <label htmlFor="new-user-password">Password</label>
+                        <input
+                            id="new-user-password"
+                            name="password"
+                            type="password"
+                            value={createForm.password}
+                            onChange={handleCreateChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="admin-actions">
+                        <button type="submit" className="button button--primary" disabled={saving}>
+                            {saving ? "Creando..." : "Crear usuario"}
+                        </button>
+                    </div>
+                </form>
             </div>
 
-            <style>{`
-                .admin-search-container {
-                    max-width: 600px;
-                    margin: 0 auto;
-                }
-                .search-box {
-                    background: white;
-                    padding: 2rem;
-                    border-radius: 1rem;
-                    border: 1px solid #e5e7eb;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                }
-                .admin-user-card {
-                    background: white;
-                    border-radius: 1rem;
-                    border: 1px solid #e5e7eb;
-                    overflow: hidden;
-                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                }
-                .user-card__header {
-                    padding: 1.5rem;
-                    background: #f9fafb;
-                    display: flex;
-                    align-items: center;
-                    gap: 1.25rem;
-                    border-bottom: 1px solid #e5e7eb;
-                }
-                .user-avatar {
-                    width: 60px;
-                    height: 60px;
-                    background: var(--color-primary, #5B21B6);
-                    color: white;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    border-radius: 50%;
-                    font-size: 1.5rem;
-                    font-weight: bold;
-                }
-                .user-info h3 { margin: 0; font-size: 1.25rem; color: #111827; }
-                .role-tag {
-                    display: inline-block;
-                    margin-top: 0.25rem;
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    background: #e0f2fe;
-                    color: #0369a1;
-                    padding: 0.1rem 0.5rem;
-                    border-radius: 4px;
-                }
-                .user-card__body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
-                .info-row { display: flex; justify-content: space-between; font-size: 0.95rem; }
-                .user-card__footer { padding: 1.5rem; border-top: 1px solid #f3f4f6; }
-                
-                .button--danger { background: #ef4444; color: white; }
-                .button--success { background: #10b981; color: white; }
-            `}</style>
-        </div>
+            {foundUser && (
+                <article className="admin-form-card admin-stack" aria-live="polite">
+                    <h2>Usuario encontrado</h2>
+                    <p><strong>ID:</strong> {foundUser.id}</p>
+                    <p><strong>Email:</strong> {foundUser.email}</p>
+                    <p><strong>Rol:</strong> {foundUser.role}</p>
+                    <p>
+                        <strong>Estado:</strong>{" "}
+                        <span className={`status-pill ${foundUser.enabled ? "active" : "inactive"}`}>
+                            {foundUser.enabled ? "Habilitado" : "Deshabilitado"}
+                        </span>
+                    </p>
+
+                    <div className="admin-actions">
+                        <button type="button" className="button button--text" onClick={handleToggleStatus}>
+                            {foundUser.enabled ? "Desactivar" : "Activar"} cuenta
+                        </button>
+                    </div>
+                </article>
+            )}
+        </section>
     );
 }
 

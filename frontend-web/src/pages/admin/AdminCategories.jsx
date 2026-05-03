@@ -1,142 +1,157 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { categoryService } from "../../services/categoryService";
 
-/**
- * AdminCategories - Gestión de categorías de productos.
- */
 function AdminCategories() {
     const [categories, setCategories] = useState([]);
     const [newCategoryName, setNewCategoryName] = useState("");
+    const [editingCategoryId, setEditingCategoryId] = useState(null);
+    const [editingName, setEditingName] = useState("");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         fetchCategories();
     }, []);
 
-    const fetchCategories = async () => {
+    async function fetchCategories() {
         try {
             setLoading(true);
+            setError("");
             const data = await categoryService.getCategories();
             setCategories(data);
         } catch (err) {
-            console.error("Error al cargar categorías", err);
+            setError(err.message || "No se pudieron cargar las categorias.");
         } finally {
             setLoading(false);
         }
-    };
+    }
 
-    const handleCreate = async (e) => {
-        e.preventDefault();
+    async function handleCreate(event) {
+        event.preventDefault();
         if (!newCategoryName.trim()) return;
-        
-        setSaving(true);
+
         try {
-            const data = await categoryService.createCategory(newCategoryName);
-            setCategories(prev => [...prev, data]);
+            setSaving(true);
+            const created = await categoryService.createCategory(newCategoryName.trim());
+            setCategories((prev) => [...prev, created]);
             setNewCategoryName("");
-            alert("Categoría creada con éxito.");
+            setMessage("Categoria creada correctamente.");
         } catch (err) {
-            alert("Error al crear la categoría.");
-            console.error(err);
+            setError(err.message || "No se pudo crear la categoria.");
         } finally {
             setSaving(false);
         }
-    };
+    }
 
-    if (loading) return <div className="admin-loading">Cargando categorías...</div>;
+    function startEditing(category) {
+        setEditingCategoryId(category.id);
+        setEditingName(category.name);
+    }
+
+    async function saveEdition() {
+        if (!editingCategoryId || !editingName.trim()) return;
+
+        try {
+            setSaving(true);
+            await categoryService.updateCategory(editingCategoryId, editingName.trim());
+            setCategories((prev) =>
+                prev.map((category) =>
+                    category.id === editingCategoryId ? { ...category, name: editingName.trim() } : category
+                )
+            );
+            setEditingCategoryId(null);
+            setEditingName("");
+            setMessage("Categoria actualizada correctamente.");
+        } catch (err) {
+            setError(err.message || "No se pudo actualizar la categoria.");
+        } finally {
+            setSaving(false);
+        }
+    }
+
+    if (loading) return <div className="admin-loading">Cargando categorias...</div>;
 
     return (
-        <div className="admin-page">
+        <section className="admin-page admin-stack" aria-labelledby="admin-categories-title">
             <header className="admin-page-header">
                 <div>
-                    <Link to="/admin" className="back-link">← Volver al Panel</Link>
-                    <h1>Gestión de Categorías</h1>
+                    <Link to="/admin" className="back-link">Volver al panel</Link>
+                    <h1 id="admin-categories-title">Gestion de categorias</h1>
                 </div>
             </header>
 
-            <div className="admin-category-layout">
-                {/* Formulario de creación rápida */}
-                <div className="admin-form-card">
-                    <h3>Nueva Categoría</h3>
-                    <form onSubmit={handleCreate} className="quick-form">
-                        <input
-                            type="text"
-                            value={newCategoryName}
-                            onChange={(e) => setNewCategoryName(e.target.value)}
-                            placeholder="Nombre de la categoría..."
-                            required
-                        />
-                        <button type="submit" className="button button--primary" disabled={saving}>
-                            {saving ? "Creando..." : "Añadir"}
-                        </button>
-                    </form>
-                </div>
+            {error && <p className="admin-error-msg" role="alert">{error}</p>}
+            {message && <p className="admin-success-msg" aria-live="polite">{message}</p>}
 
-                {/* Listado de categorías */}
-                <div className="admin-table-wrapper">
-                    <table className="admin-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Acciones</th>
+            <form className="admin-form-card admin-stack" onSubmit={handleCreate}>
+                <h2>Nueva categoria</h2>
+                <div className="admin-actions">
+                    <input
+                        type="text"
+                        value={newCategoryName}
+                        onChange={(event) => setNewCategoryName(event.target.value)}
+                        placeholder="Nombre de categoria"
+                        aria-label="Nombre de nueva categoria"
+                        required
+                    />
+                    <button type="submit" className="button button--primary" disabled={saving}>
+                        {saving ? "Guardando..." : "Crear"}
+                    </button>
+                </div>
+            </form>
+
+            <div className="admin-table-wrapper">
+                <table className="admin-table">
+                    <caption className="sr-only">Tabla de categorias</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {categories.map((category) => (
+                            <tr key={category.id}>
+                                <td>{category.id}</td>
+                                <td>
+                                    {editingCategoryId === category.id ? (
+                                        <input
+                                            value={editingName}
+                                            onChange={(event) => setEditingName(event.target.value)}
+                                            aria-label={`Editar nombre de categoria ${category.id}`}
+                                        />
+                                    ) : (
+                                        category.name
+                                    )}
+                                </td>
+                                <td>
+                                    <div className="admin-actions">
+                                        {editingCategoryId === category.id ? (
+                                            <>
+                                                <button type="button" className="button button--primary" onClick={saveEdition} disabled={saving}>
+                                                    Guardar
+                                                </button>
+                                                <button type="button" className="button button--text" onClick={() => setEditingCategoryId(null)}>
+                                                    Cancelar
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <button type="button" className="button button--text" onClick={() => startEditing(category)}>
+                                                Editar
+                                            </button>
+                                        )}
+                                    </div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {categories.map((cat) => (
-                                <tr key={cat.id}>
-                                    <td>{cat.id}</td>
-                                    <td><strong>{cat.name}</strong></td>
-                                    <td className="td-actions">
-                                        {/* Podríamos añadir editar aquí también */}
-                                        <span style={{color: '#9ca3af', fontSize: '0.8rem'}}>Opciones avanzadas próximamente</span>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                        ))}
+                    </tbody>
+                </table>
             </div>
-
-            <style>{`
-                .admin-category-layout {
-                    display: grid;
-                    grid-template-columns: 350px 1fr;
-                    gap: 2rem;
-                    align-items: start;
-                }
-                .admin-form-card {
-                    background: white;
-                    padding: 1.5rem;
-                    border-radius: 0.75rem;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                    border: 1px solid #e5e7eb;
-                }
-                .admin-form-card h3 {
-                    margin-top: 0;
-                    margin-bottom: 1rem;
-                    font-size: 1.1rem;
-                    color: #374151;
-                }
-                .quick-form {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1rem;
-                }
-                .quick-form input {
-                    padding: 0.6rem;
-                    border: 1px solid #d1d5db;
-                    border-radius: 0.375rem;
-                }
-                @media (max-width: 768px) {
-                    .admin-category-layout {
-                        grid-template-columns: 1fr;
-                    }
-                }
-            `}</style>
-        </div>
+        </section>
     );
 }
 

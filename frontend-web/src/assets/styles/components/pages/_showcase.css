@@ -1,0 +1,104 @@
+.home-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+    gap: 1.2rem;
+    align-items: stretch;
+}
+
+.home-hero__copy,
+.home-hero__panel {
+    padding: 2rem;
+    border-radius: 32px;
+    border: 1px solid rgba(var(--color-primary200-rgb), 0.52);
+    box-shadow: var(--shadow-card);
+}
+
+.home-hero__copy {
+    background:
+        radial-gradient(circle at top right, rgba(var(--color-primary200-rgb), 0.3), transparent 28%),
+        linear-gradient(135deg, rgba(var(--color-neutral100-rgb), 0.96), rgba(var(--color-primary100-rgb), 0.82));
+    display: grid;
+    align-content: center;
+    gap: 1rem;
+}
+
+.home-hero__eyebrow {
+    margin: 0;
+    color: var(--color-primary500);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: var(--text-b4);
+    font-weight: 700;
+}
+
+.home-hero__title {
+    margin: 0;
+    max-width: 13ch;
+}
+
+.home-hero__description {
+    margin: 0;
+    max-width: 46rem;
+    color: var(--color-text-secondary);
+    font-size: var(--text-b1);
+}
+
+.home-hero__actions {
+    display: flex;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+}
+
+.home-hero__panel {
+    background:
+        linear-gradient(180deg, rgba(var(--color-secondary500-rgb), 0.96), rgba(var(--color-secondary600-rgb), 0.98));
+    display: grid;
+    gap: 1rem;
+    align-content: center;
+}
+
+.home-hero__metric {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1rem 1.1rem;
+    border-radius: 18px;
+    background: rgba(var(--color-neutral100-rgb), 0.08);
+    border: 1px solid rgba(var(--color-neutral100-rgb), 0.12);
+}
+
+.home-hero__metric-value {
+    color: var(--color-neutral100);
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+}
+
+.home-hero__metric-label {
+    color: rgba(var(--color-neutral100-rgb), 0.7);
+    font-size: var(--text-b3);
+}
+
+.catalog-page {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.catalog-filters {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+    .home-hero {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .home-hero__copy,
+    .home-hero__panel {
+        padding: 1.3rem;
+        border-radius: 24px;
+    }
+}

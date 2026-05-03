@@ -25,28 +25,42 @@ function Products() {
     if (error) return <div className="status-message status-message--error">Error: {error}</div>;
 
     return (
-        <div className="app-container">
-            <div className="category-filters flex gap-1 overflow-x-auto p-1 mb-1">
-                <button 
-                    className={`button whitespace-nowrap ${!selectedCategory ? "" : "button--text"}`}
+        <div className="catalog-page">
+            <section className="page-intro">
+                <p className="page-intro__eyebrow">Catalogo diario</p>
+                <h1 className="page-intro__title">Una seleccion pensada para entrar por los ojos.</h1>
+                <p className="page-intro__description">
+                    Filtra por familia y explora cada pieza con una presentacion mas clara, apetecible y facil de comprar.
+                </p>
+            </section>
+
+            <section className="catalog-filters">
+                <button
+                    className={`button ${!selectedCategory ? "button--primary" : "button--secondary"}`}
                     onClick={() => setSelectedCategory(null)}
                 >
                     Todos
                 </button>
-                {categories.map(cat => (
-                    <button 
-                        key={cat.id}
-                        className={`button whitespace-nowrap ${selectedCategory === cat.id ? "" : "button--text"}`}
-                        onClick={() => setSelectedCategory(cat.id)}
+                {categories.map((category) => (
+                    <button
+                        key={category.id}
+                        className={`button ${selectedCategory === category.id ? "button--primary" : "button--secondary"}`}
+                        onClick={() => setSelectedCategory(category.id)}
                     >
-                        {cat.name}
+                        {category.name}
                     </button>
                 ))}
-            </div>
-            
-            <ProductSection title="Nuestro Catálogo" products={products} CardComponent={CardVertical} />
+            </section>
+
+            <ProductSection
+                title="Nuestro catalogo"
+                eyebrow="Seleccion"
+                description="Productos preparados para una experiencia mas visual, ordenada y comercial."
+                products={products}
+                CardComponent={CardVertical}
+            />
         </div>
-    )
+    );
 }
 
 export default Products;

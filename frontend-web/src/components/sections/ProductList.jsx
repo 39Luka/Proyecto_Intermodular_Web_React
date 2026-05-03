@@ -1,4 +1,5 @@
-import { useNavigate } from 'react-router-dom'
+import { createElement } from "react";
+import { useNavigate } from "react-router-dom";
 
 function ProductList({ products, page, CardComponent }) {
 
@@ -11,17 +12,16 @@ function ProductList({ products, page, CardComponent }) {
 
     return (
         <>
-            {products.map(product =>
-                <CardComponent
-                    key={product.id}
-                    id={product.id}
-                    {...product}
-                    onNavigate={handleNavigate}
-                />
-
+            {products.map((product) =>
+                createElement(CardComponent, {
+                    key: product.id,
+                    id: product.id,
+                    ...product,
+                    onNavigate: handleNavigate,
+                })
             )}
         </>
-    )
+    );
 }
 
 export default ProductList;

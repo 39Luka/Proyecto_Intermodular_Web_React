@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useEffect } from "react";
 import { authService } from "../services/authService";
 
@@ -76,7 +77,19 @@ export function AuthProvider({ children }) {
         return loggedUser;
     };
 
-    const register = async (email, password) => {
+    const register = async (...args) => {
+        // Backward compatible signature:
+        // register(email, password) or register(name, email, password)
+        let email = "";
+        let password = "";
+        if (args.length >= 3) {
+            email = args[1];
+            password = args[2];
+        } else {
+            email = args[0];
+            password = args[1];
+        }
+
         // API RegisterRequest only accepts { email, password }
         const data = await authService.register(email, password);
         const token = data.token || data.accessToken || data.jwt;

@@ -1,38 +1,34 @@
-import { AuthProvider } from './context/AuthContext';
-import { useAuth } from './hooks/useAuth';
-import { Navigate, Route, Routes } from 'react-router-dom';
-import Footer from './components/layout/Footer.jsx';
-import Header from './components/layout/Header.jsx';
-import AppRoutes from './routes/AppRoutes.jsx';
-import Login from './pages/Login.jsx';
-import Register from './pages/Register.jsx';
+import { AuthProvider } from "./context/AuthContext";
+import { CartProvider } from "./context/CartContext";
+import Header from "./components/layout/Header.jsx";
+import Footer from "./components/layout/Footer.jsx";
+import AppRoutes from "./routes/AppRoutes.jsx";
+import { useAuth } from "./hooks/useAuth";
 
 function AppContent() {
-  const { loading } = useAuth();
+    const { loading } = useAuth();
 
-  if (loading) {
-    return <div className="full-page-loader">Cargando...</div>;
-  }
+    if (loading) {
+        return <div className="full-page-loader">Cargando...</div>;
+    }
 
-  return (
-    <>
-      <Header />
-      <AppRoutes />
-      <Footer />
-    </>
-  );
+    return (
+        <>
+            <Header />
+            <AppRoutes />
+            <Footer />
+        </>
+    );
 }
 
-import { CartProvider } from './context/CartContext';
-
 function App() {
-  return (
-    <AuthProvider>
-      <CartProvider>
-        <AppContent />
-      </CartProvider>
-    </AuthProvider>
-  );
+    return (
+        <AuthProvider>
+            <CartProvider>
+                <AppContent />
+            </CartProvider>
+        </AuthProvider>
+    );
 }
 
 export default App;

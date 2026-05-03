@@ -1,11 +1,11 @@
 import slugify from "slugify";
 
-function CardVertical({ id, title, image, description, onNavigate }) {
+function CardVertical({ id, title, image, description, price, category, onNavigate }) {
     const slug = slugify(title || "producto", { lower: true, strict: true });
 
     const handleOnClick = () => onNavigate?.(id);
-    const handleOnKeyUp = (e) => {
-        if (e.key === "Enter" || e.key === " ") onNavigate?.(id);
+    const handleOnKeyUp = (event) => {
+        if (event.key === "Enter" || event.key === " ") onNavigate?.(id);
     };
 
     return (
@@ -24,8 +24,13 @@ function CardVertical({ id, title, image, description, onNavigate }) {
             </figure>
 
             <div className="card__content">
+                <p className="card__eyebrow">{category?.name || "Obrador diario"}</p>
                 <h3 className="card__title" id={`title-${slug}`}>{title}</h3>
                 <p className="card__description" id={`desc-${slug}`}>{description}</p>
+                <div className="card__meta">
+                    <span className="card__price">{price != null ? `${price.toFixed(2)} EUR` : "Fresco hoy"}</span>
+                    <span className="card__action">Ver detalle</span>
+                </div>
             </div>
         </article>
     );

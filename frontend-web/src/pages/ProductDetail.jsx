@@ -16,7 +16,7 @@ function ProductDetail() {
   if (error) return <div className="status-message status-message--error">Error: {error}</div>;
   if (!product) return <div className="status-message">Producto no encontrado</div>;
 
-  const name = slugify(product.title || product.nombre, { lower: true, strict: true })
+  const name = slugify(product.title || product.nombre, { lower: true, strict: true });
 
   const handleAddToCart = () => {
     addToCart(product, 1);
@@ -26,11 +26,8 @@ function ProductDetail() {
   return (
     <div className="product-detail-wrapper">
       <div className="product-detail-header">
-        <button
-          className="button button--text"
-          onClick={() => navigate(-1)}
-        >
-          ← Volver atrás
+        <button className="button button--secondary" onClick={() => navigate(-1)}>
+          Volver
         </button>
       </div>
 
@@ -44,25 +41,21 @@ function ProductDetail() {
         </figure>
 
         <div className="product-detail__content">
-          <header>
+          <header className="product-detail__copy">
+            <p className="product-detail__eyebrow">{product.category?.name || "Pieza destacada"}</p>
             <h2 className="product-detail__title" id={`title-${name}`}>{product.title}</h2>
             <div className="product-detail__badges">
-              <span className="badge">Novedad</span>
+              <span className="badge">Recien preparado</span>
             </div>
           </header>
 
           <p className="product-detail__description">{product.description}</p>
 
-          <div className="product-detail__divider"></div>
-
-          <ProductActionCard 
-            product={product} 
-            onAddToCart={handleAddToCart} 
-          />
+          <ProductActionCard product={product} onAddToCart={handleAddToCart} />
         </div>
       </article>
     </div>
-  )
+  );
 }
 
-export default ProductDetail;
+export default ProductDetail;

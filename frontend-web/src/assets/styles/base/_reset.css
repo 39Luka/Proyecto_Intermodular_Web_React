@@ -1,8 +1,29 @@
-/* ===== Reset & Base ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: var(--font-body);
-  color: var(--color-neutral1000);
+  color: var(--color-text-primary);
   margin: 0;
-  padding: 0;
-  background-color: var(--color-neutral100);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(var(--color-primary100-rgb), 0.85), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(var(--color-secondary100-rgb), 0.65), transparent 30%),
+    linear-gradient(180deg, #fffdfa 0%, #f6efe7 100%);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
 }
