@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Nav from "./Nav.jsx";
 import { useAuth } from "../../hooks/useAuth";
+import BrandLogo from "./BrandLogo.jsx";
 
 function Header() {
   const { isAuthenticated, logout } = useAuth();
@@ -9,7 +10,7 @@ function Header() {
     <header className="header">
       <div className="header__container">
         <Link className="header__logo" to="/home" aria-label="Ir al inicio de La Croassantina">
-          <span className="header__brand-mark">LC</span>
+          <BrandLogo className="header__brand-mark" />
           <span className="header__brand-copy">
             <span className="header__brand-title">La Croassantina</span>
             <span className="header__brand-subtitle">Bakery atelier and daily treats</span>
@@ -20,7 +21,7 @@ function Header() {
 
         {isAuthenticated ? (
           <button className="button button--secondary" onClick={logout}>
-            Cerrar sesion
+            Cerrar sesión
           </button>
         ) : (
           <Link className="button button--primary" to="/login">

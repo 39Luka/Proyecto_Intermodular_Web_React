@@ -1,14 +1,15 @@
 import { createElement } from "react";
 import { useNavigate } from "react-router-dom";
 
-function ProductList({ products, page, CardComponent }) {
-
+function ProductList({ products, page, CardComponent, onNavigate }) {
     const navigate = useNavigate();
 
-    const handleNavigate = page ? (id) => {
+    const handleNavigate = onNavigate || (page ? (id) => {
         const product = products.find(p => p.id === id);
-        navigate(`/${page}/${id}`, { state: { product } });
-    } : undefined;
+        // Default to /products/ if it's from home or catalog, unless page is specific
+        const path = (page === "home" || page === "catalog") ? "products" : page;
+        navigate(`/${path}/${id}`, { state: { product } });
+    } : undefined);
 
     return (
         <>

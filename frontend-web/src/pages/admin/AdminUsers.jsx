@@ -75,7 +75,7 @@ function AdminUsers() {
             <header className="admin-page-header">
                 <div>
                     <Link to="/admin" className="back-link">Volver al panel</Link>
-                    <h1 id="admin-users-title">Gestion de usuarios</h1>
+                    <h1 id="admin-users-title">Gestión de usuarios</h1>
                 </div>
             </header>
 
@@ -130,7 +130,7 @@ function AdminUsers() {
                     </div>
 
                     <div className="admin-form-field">
-                        <label htmlFor="new-user-password">Password</label>
+                        <label htmlFor="new-user-password">Contraseña</label>
                         <input
                             id="new-user-password"
                             name="password"

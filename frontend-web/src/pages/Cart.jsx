@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import { purchaseService } from "../services/purchaseService";
 import { promotionService } from "../services/promotionService";
 import { useState, useEffect } from "react";
@@ -8,6 +10,7 @@ import CartSummary from "../components/cart/CartSummary";
 
 function Cart() {
     const { cartItems, removeFromCart, updateQuantity, clearCart } = useCart();
+    const { user } = useContext(AuthContext);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -72,7 +75,11 @@ function Cart() {
                 promotionId: selectedPromotions[item.product.id] || null
             }));
 
-            await purchaseService.createPurchase(itemsToBuy);
+            // The backend requires `userId` when the authenticated user is ADMIN.
+            // For regular users it is optional (resolved from the JWT), but
+            // sending it is harmless and keeps the call uniform.
+            const userId = user?.id ?? null;
+            await purchaseService.createPurchase(itemsToBuy, userId);
             clearCart();
             navigate("/purchased");
         } catch (err) {
@@ -84,11 +91,12 @@ function Cart() {
 
     if (cartItems.length === 0) {
         return (
-            <div className="empty-state">
-                <h2>Tu carrito esta vacio</h2>
-                <p>Cuando anadas productos aqui, podremos presentar mejor el resumen y el cierre de compra.</p>
-                <button className="button button--primary" onClick={() => navigate("/products")}>
-                    Ir al catalogo
+            <div className="empty-state empty-state--quiet">
+                <p className="empty-state__description">
+                    Tu carrito está vacío. Cuando añadas productos aquí, podremos presentar mejor el resumen y el cierre de compra.
+                </p>
+                <button className="button button--secondary" onClick={() => navigate("/products")}>
+                    Ir al catálogo
                 </button>
             </div>
         );
@@ -98,15 +106,24 @@ function Cart() {
         <div className="commerce-page">
             <section className="page-intro">
                 <p className="page-intro__eyebrow">Checkout</p>
-                <h1 className="page-intro__title">Prepara tu pedido con una experiencia mas clara.</h1>
+                <h1 className="page-intro__title">Prepara tu pedido con una experiencia más clara.</h1>
                 <p className="page-intro__description">
                     Ajusta cantidades, aplica promociones y revisa el total antes de finalizar la compra.
                 </p>
             </section>
 
             <section className="commerce-stack">
-                <div className="commerce-toolbar">
-                    <h2>Mi carrito</h2>
+                <div 
+                    className="commerce-toolbar"
+                    tabIndex="0"
+                    role="region"
+                    onClick={() => {}} 
+                    onKeyUp={(e) => e.key === 'Enter' && e.target.click()}
+                    aria-labelledby="title-cafe"
+                    aria-describedby="desc-cafe"
+                >
+                    <h2 id="title-cafe">Mi carrito</h2>
+                    <p id="desc-cafe" className="sr-only">Lista de productos seleccionados para compra.</p>
                     <button className="button button--secondary" onClick={clearCart}>
                         Vaciar carrito
                     </button>
@@ -114,25 +131,27 @@ function Cart() {
 
                 {error && <div className="admin-error-msg">{error}</div>}
 
-                <div className="commerce-stack">
-                    {cartItems.map((item) => (
-                        <CartItem
-                            key={item.product.id}
-                            item={item}
-                            promotions={availablePromotions[item.product.id]}
-                            selectedPromoId={selectedPromotions[item.product.id]}
-                            onPromoChange={handlePromoSelect}
-                            onQuantityChange={updateQuantity}
-                            onRemove={removeFromCart}
-                        />
-                    ))}
-                </div>
+                <div className="cart-order-panel">
+                    <div className="cart-items-group">
+                        {cartItems.map((item) => (
+                            <CartItem
+                                key={item.product.id}
+                                item={item}
+                                promotions={availablePromotions[item.product.id]}
+                                selectedPromoId={selectedPromotions[item.product.id]}
+                                onPromoChange={handlePromoSelect}
+                                onQuantityChange={updateQuantity}
+                                onRemove={removeFromCart}
+                            />
+                        ))}
+                    </div>
 
-                <CartSummary
-                    total={finalTotal}
-                    onCheckout={handleCheckout}
-                    isProcessing={isProcessing}
-                />
+                    <CartSummary
+                        total={finalTotal}
+                        onCheckout={handleCheckout}
+                        isProcessing={isProcessing}
+                    />
+                </div>
             </section>
         </div>
     );

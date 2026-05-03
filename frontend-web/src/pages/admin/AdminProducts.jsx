@@ -17,8 +17,8 @@ function AdminProducts() {
         try {
             setLoading(true);
             setError("");
-            const data = await productService.getAllProducts();
-            setProducts(data);
+            const { products } = await productService.getAllProducts();
+            setProducts(products);
         } catch (err) {
             setError(err.message || "No se pudieron cargar los productos.");
         } finally {
@@ -26,27 +26,28 @@ function AdminProducts() {
         }
     }
 
-    async function handleDelete(product) {
-        const confirmed = window.confirm(`Se eliminara "${product.name}". Quieres continuar?`);
+    async function handleToggleActive(product) {
+        const action = product.active ? "desactivar" : "activar";
+        const confirmed = window.confirm(`Se va a ${action} "${product.name}". ¿Quieres continuar?`);
         if (!confirmed) return;
 
         try {
-            await productService.deleteProduct(product.id);
-            setProducts((prev) => prev.filter((item) => item.id !== product.id));
-            setMessage("Producto eliminado correctamente.");
+            await productService.patchProduct(product.id, !product.active);
+            setProducts((prev) => prev.map((item) => item.id === product.id ? { ...item, active: !item.active } : item));
+            setMessage(`Producto ${product.active ? "desactivado" : "activado"} correctamente.`);
         } catch (err) {
-            setError(err.message || "No se pudo eliminar el producto.");
+            setError(err.message || "No se pudo cambiar el estado del producto.");
         }
     }
 
-    if (loading) return <div className="admin-loading">Cargando catalogo...</div>;
+    if (loading) return <div className="admin-loading">Cargando catálogo...</div>;
 
     return (
         <section className="admin-page admin-stack" aria-labelledby="admin-products-title">
             <header className="admin-page-header">
                 <div>
                     <Link to="/admin" className="back-link">Volver al panel</Link>
-                    <h1 id="admin-products-title">Gestion de productos</h1>
+                    <h1 id="admin-products-title">Gestión de productos</h1>
                 </div>
                 <Link to="/admin/products/new" className="button button--primary">Nuevo producto</Link>
             </header>
@@ -56,11 +57,11 @@ function AdminProducts() {
 
             <div className="admin-table-wrapper">
                 <table className="admin-table">
-                    <caption className="sr-only">Tabla de productos del catalogo</caption>
+                    <caption className="sr-only">Tabla de productos del catálogo</caption>
                     <thead>
                         <tr>
                             <th scope="col">Nombre</th>
-                            <th scope="col">Categoria</th>
+                            <th scope="col">Categoría</th>
                             <th scope="col">Precio</th>
                             <th scope="col">Stock</th>
                             <th scope="col">Acciones</th>
@@ -70,7 +71,7 @@ function AdminProducts() {
                         {products.map((product) => (
                             <tr key={product.id}>
                                 <th scope="row">{product.name}</th>
-                                <td>{product.category?.name || "Sin categoria"}</td>
+                                <td>{product.category?.name || "Sin categoría"}</td>
                                 <td>{formatPrice(product.price)}</td>
                                 <td>{product.stock}</td>
                                 <td>
@@ -80,11 +81,11 @@ function AdminProducts() {
                                         </Link>
                                         <button
                                             type="button"
-                                            onClick={() => handleDelete(product)}
+                                            onClick={() => handleToggleActive(product)}
                                             className="button button--text"
-                                            aria-label={`Eliminar ${product.name}`}
+                                            aria-label={`${product.active ? "Desactivar" : "Activar"} ${product.name}`}
                                         >
-                                            Eliminar
+                                            {product.active ? "Desactivar" : "Activar"}
                                         </button>
                                     </div>
                                 </td>

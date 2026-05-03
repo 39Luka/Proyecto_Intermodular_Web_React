@@ -7,7 +7,7 @@ function PurchaseInfo({ purchase, details, onPay, onCancel }) {
 
     return (
         <section className="purchase-info">
-            <h2 className="section-title">Informacion general</h2>
+            <h2 className="section-title">Información general</h2>
             <div className="info-card">
                 <div className="info-row">
                     <span className="label">Fecha</span>

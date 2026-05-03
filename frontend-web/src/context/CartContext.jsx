@@ -1,63 +1,74 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 
 const CartContext = createContext();
 
-export const useCart = () => {
-    return useContext(CartContext);
-};
+export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState(() => {
-        const savedCart = localStorage.getItem('bakery_cart');
-        return savedCart ? JSON.parse(savedCart) : [];
+        try {
+            const saved = localStorage.getItem('bakery_cart');
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
     });
 
     useEffect(() => {
         localStorage.setItem('bakery_cart', JSON.stringify(cartItems));
     }, [cartItems]);
 
-    const addToCart = (product, quantity = 1) => {
+    const addToCart = useCallback((product, quantity = 1) => {
         setCartItems(prev => {
-            const existingItem = prev.find(item => item.product.id === product.id);
-            if (existingItem) {
+            const existing = prev.find(item => item.product.id === product.id);
+            const stockLimit = product.stock ?? Infinity;
+
+            if (existing) {
+                const newQuantity = Math.min(existing.quantity + quantity, stockLimit);
                 return prev.map(item => 
-                    item.product.id === product.id 
-                        ? { ...item, quantity: item.quantity + quantity }
-                        : item
+                    item.product.id === product.id ? { ...item, quantity: newQuantity } : item
                 );
             }
-            return [...prev, { product, quantity }];
+            
+            return [...prev, { product, quantity: Math.min(quantity, stockLimit) }];
         });
-    };
+    }, []);
 
-    const removeFromCart = (productId) => {
+    const removeFromCart = useCallback((productId) => {
         setCartItems(prev => prev.filter(item => item.product.id !== productId));
-    };
+    }, []);
 
-    const updateQuantity = (productId, quantity) => {
+    const updateQuantity = useCallback((productId, quantity) => {
         if (quantity < 1) return removeFromCart(productId);
-        setCartItems(prev => prev.map(item => 
-            item.product.id === productId ? { ...item, quantity } : item
-        ));
-    };
+        
+        setCartItems(prev => prev.map(item => {
+            if (item.product.id === productId) {
+                const stockLimit = item.product.stock ?? Infinity;
+                return { ...item, quantity: Math.min(quantity, stockLimit) };
+            }
+            return item;
+        }));
+    }, [removeFromCart]);
 
-    const clearCart = () => {
-        setCartItems([]);
-    };
+    const clearCart = useCallback(() => setCartItems([]), []);
 
-    const cartTotal = cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+    const cartTotal = useMemo(() => 
+        cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0),
+    [cartItems]);
+
+    const contextValue = useMemo(() => ({
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        cartTotal,
+        cartCount: cartItems.length
+    }), [cartItems, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal]);
 
     return (
-        <CartContext.Provider value={{
-            cartItems,
-            addToCart,
-            removeFromCart,
-            updateQuantity,
-            clearCart,
-            cartTotal,
-            cartCount: cartItems.length
-        }}>
+        <CartContext.Provider value={contextValue}>
             {children}
         </CartContext.Provider>
     );

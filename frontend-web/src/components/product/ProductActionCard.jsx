@@ -1,6 +1,14 @@
+import { useState } from "react";
+
 function ProductActionCard({ product, onAddToCart }) {
     const { price, stock, category } = product;
+    const [selectedQuantity, setSelectedQuantity] = useState(1);
     const isOutOfStock = stock <= 0;
+
+    const handleQuantityChange = (e) => {
+        const val = parseInt(e.target.value) || 1;
+        setSelectedQuantity(Math.min(val, stock));
+    };
 
     return (
         <div className="product-detail__actions">
@@ -16,14 +24,29 @@ function ProductActionCard({ product, onAddToCart }) {
                 </div>
             </div>
 
+            {!isOutOfStock && (
+                <div className="product-detail__quantity-selector">
+                    <label htmlFor="quantity">Cantidad</label>
+                    <input
+                        id="quantity"
+                        type="number"
+                        min="1"
+                        max={stock}
+                        value={selectedQuantity}
+                        onChange={handleQuantityChange}
+                        className="form-input w-80"
+                    />
+                </div>
+            )}
+
             <div className="product-detail__purchase-card">
-                <p className="product-detail__purchase-eyebrow">{category?.name || "Seleccion del obrador"}</p>
+                <p className="product-detail__purchase-eyebrow">{category?.name || "Selección del obrador"}</p>
                 <button
                     className="product-detail__add-to-cart"
-                    onClick={onAddToCart}
+                    onClick={() => onAddToCart(selectedQuantity)}
                     disabled={isOutOfStock}
                 >
-                    {!isOutOfStock ? "Anadir al carrito" : "Agotado"}
+                    {!isOutOfStock ? "Añadir al carrito" : "Agotado"}
                 </button>
             </div>
         </div>

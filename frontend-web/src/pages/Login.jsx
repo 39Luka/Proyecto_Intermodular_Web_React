@@ -26,7 +26,7 @@ function Login() {
             await login(validation.values.email, validation.values.password);
             navigate("/home");
         } catch {
-            setServerError("No se pudo iniciar sesion. Revisa tus credenciales.");
+            setServerError("No se pudo iniciar sesión. Revisa tus credenciales.");
         }
     };
 
@@ -35,11 +35,11 @@ function Login() {
             <div className="auth-image" aria-hidden="true" />
             <div className="auth-form-wrapper">
                 <div className="auth-form">
-                    <h1 className="auth-title">Iniciar sesion</h1>
+                    <h1 className="auth-title">Iniciar sesión</h1>
 
                     <form onSubmit={handleSubmit} noValidate>
                         <FormField name="email" label="Email" type="email" validation={validation} />
-                        <FormField name="password" label="Contrasena" type="password" validation={validation} />
+                        <FormField name="password" label="Contraseña" type="password" validation={validation} />
 
                         {serverError && <p className="auth-error" role="alert">{serverError}</p>}
 
@@ -49,7 +49,7 @@ function Login() {
                     </form>
 
                     <p className="auth-link">
-                        No tienes cuenta? <Link to="/register">Registrate</Link>
+                        ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
                     </p>
                 </div>
             </div>

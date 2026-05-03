@@ -1,102 +1,73 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { productService } from "../services/productService";
 
-/**
- * Hook to fetch all products, optionally filtered by category and paginated.
- * @param {number|string} [categoryId] - Optional category ID to filter by.
- * @param {number} [page] - Page number (0-indexed).
- * @param {number} [size] - Page size.
- * @returns {{ products: Array, loading: boolean, error: string|null }}
- */
 export function useProducts(categoryId = null, page = 0, size = 12) {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [state, setState] = useState({ 
+        products: [], 
+        totalPages: 1, 
+        totalElements: 0, 
+        loading: true, 
+        error: null 
+    });
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                setLoading(true);
-                const data = await productService.getAllProducts(categoryId, page, size);
-                setProducts(data);
-            } catch (err) {
-                console.error("Failed to fetch products", err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchProducts();
+    const fetchProducts = useCallback(async () => {
+        try {
+            setState(s => ({ ...s, loading: true, error: null }));
+            const result = await productService.getAllProducts(categoryId, page, size);
+            setState({
+                products: result.products,
+                totalPages: result.totalPages,
+                totalElements: result.totalElements,
+                loading: false,
+                error: null
+            });
+        } catch (err) {
+            setState(s => ({ ...s, loading: false, error: err.message }));
+        }
     }, [categoryId, page, size]);
 
-    return { products, loading, error };
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
+
+    return state;
 }
 
-/**
- * Hook to fetch top selling products.
- */
 export function useTopSelling() {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [state, setState] = useState({ products: [], loading: true, error: null });
 
     useEffect(() => {
-        const fetchTopSelling = async () => {
+        const fetch = async () => {
             try {
-                setLoading(true);
                 const data = await productService.getTopSelling();
-                setProducts(data);
+                setState({ products: data, loading: false, error: null });
             } catch (err) {
-                console.error("Failed to fetch top selling products", err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
+                setState({ products: [], loading: false, error: err.message });
             }
         };
-
-        fetchTopSelling();
+        fetch();
     }, []);
 
-    return { products, loading, error };
+    return state;
 }
 
-/**
- * Hook to fetch a single product by ID.
- * @param {number|string} id - The product ID.
- * @param {object} [initialData] - Optional initial data to show while fetching/instead of fetching.
- * @returns {{ product: object|null, loading: boolean, error: string|null }}
- */
 export function useProduct(id, initialData = null) {
-    const [product, setProduct] = useState(initialData);
-    const [loading, setLoading] = useState(!initialData);
-    const [error, setError] = useState(null);
+    const [state, setState] = useState({ product: initialData, loading: !initialData, error: null });
 
     useEffect(() => {
-        const fetchProduct = async () => {
-            if (!id) return;
-
-            // If we have initialData, we might still want to fetch fresh data in background, 
-            // or just rely on it. For now, let's fetch to ensure details are up to date, 
-            // but we already showed the user the initial data.
-            // If we want to skip fetch when we have data:
-            // if (initialData) return; 
-
-            // Let's fetch to get "fresh" full details (maybe list has partial data)
+        if (!id) return;
+        const fetch = async () => {
             try {
-                if (!initialData) setLoading(true); // Only show loading if we don't have data
+                if (!initialData) setState(s => ({ ...s, loading: true }));
                 const data = await productService.getProductById(id);
-                setProduct(data);
+                setState({ product: data, loading: false, error: null });
             } catch (err) {
-                console.error("Failed to fetch product", err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
+                setState({ product: null, loading: false, error: err.message });
             }
         };
-
-        fetchProduct();
+        fetch();
     }, [id, initialData]);
 
-    return { product, loading, error };
+    return state;
 }
+

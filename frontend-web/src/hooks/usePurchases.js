@@ -1,31 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { purchaseService } from "../services/purchaseService";
+import { useAuth } from "./useAuth";
 
-/**
- * Hook to fetch all purchases.
- * @returns {{ purchases: Array, loading: boolean, error: string|null }}
- */
 export function usePurchases() {
-    const [purchases, setPurchases] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const { user } = useAuth();
+    const [state, setState] = useState({ purchases: [], loading: true, error: null });
+
+    const fetch = useCallback(async () => {
+        if (!user) return;
+        try {
+            setState(s => ({ ...s, loading: true, error: null }));
+            const data = await purchaseService.getAllPurchases(0, 50, user.id);
+            setState({ purchases: data, loading: false, error: null });
+        } catch (err) {
+            setState({ purchases: [], loading: false, error: err.message });
+        }
+    }, [user]);
 
     useEffect(() => {
-        const fetchPurchases = async () => {
-            try {
-                setLoading(true);
-                const data = await purchaseService.getAllPurchases();
-                setPurchases(data);
-            } catch (err) {
-                console.error("Failed to fetch purchases", err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+        fetch();
+    }, [fetch]);
 
-        fetchPurchases();
-    }, []);
-
-    return { purchases, loading, error };
+    return { ...state, refetch: fetch };
 }

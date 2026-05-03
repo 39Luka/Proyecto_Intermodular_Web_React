@@ -5,10 +5,10 @@
     padding: 2rem;
     border-radius: 20px;
     border: 1px solid rgba(var(--color-neutral300-rgb), 0.75);
-    background: linear-gradient(180deg, #ffffff 0%, #fcfbff 100%);
+    background: linear-gradient(180deg, var(--color-neutral100) 0%, rgba(var(--color-primary100-rgb), 0.25) 100%);
     box-shadow:
         0 1px 0 rgba(var(--color-neutral100-rgb), 0.9) inset,
-        0 18px 42px rgba(32, 16, 48, 0.09);
+        var(--shadow-card);
 }
 
 .admin-page::before {
@@ -50,12 +50,12 @@
     margin: 0;
     font-size: clamp(1.85rem, 3vw, 2.5rem);
     line-height: 1.1;
-    color: #2f2441;
+    color: var(--color-text-primary);
 }
 
 .admin-page-header p {
     margin: 0.5rem 0 0;
-    color: #615673;
+    color: var(--color-text-secondary);
     max-width: 65ch;
 }
 
@@ -64,7 +64,7 @@
     align-items: center;
     gap: 0.4rem;
     margin-bottom: 0.6rem;
-    color: #5d4a7a;
+    color: var(--color-primary600);
     text-decoration: none;
     font-size: 0.86rem;
     font-weight: 600;
@@ -100,42 +100,42 @@
     padding: 1.25rem 1.15rem;
     border-radius: 14px;
     border: 1px solid rgba(var(--color-neutral300-rgb), 0.8);
-    background: #fff;
-    box-shadow: 0 8px 24px rgba(24, 8, 40, 0.06);
+    background: var(--color-neutral100);
+    box-shadow: var(--shadow-card);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .admin-module-card:hover {
     transform: translateY(-3px);
     border-color: rgba(var(--color-primary300-rgb), 0.7);
-    box-shadow: 0 14px 30px rgba(24, 8, 40, 0.12);
+    box-shadow: var(--shadow-card-hover);
 }
 
 .admin-module-card h2 {
     margin: 0;
-    color: #35274a;
+    color: var(--color-text-primary);
     font-size: 1.28rem;
     line-height: 1.15;
 }
 
 .admin-module-card p {
     margin: 0;
-    color: #655978;
+    color: var(--color-text-secondary);
     font-size: 0.95rem;
     line-height: 1.45;
 }
 
 .admin-form-card {
-    background: #fff;
+    background: var(--color-neutral100);
     border: 1px solid rgba(var(--color-neutral300-rgb), 0.8);
     border-radius: 14px;
     padding: 1.25rem;
-    box-shadow: 0 10px 28px rgba(24, 8, 40, 0.06);
+    box-shadow: var(--shadow-card);
 }
 
 .admin-form-card h2 {
     margin: 0;
-    color: #3a2a52;
+    color: var(--color-text-primary);
     font-size: 1.2rem;
 }
 
@@ -152,7 +152,7 @@
 }
 
 .admin-form-field label {
-    color: #4f4362;
+    color: var(--color-primary600);
     font-size: 0.83rem;
     font-weight: 700;
     letter-spacing: 0.01em;
@@ -164,12 +164,12 @@
 .admin-actions input,
 .admin-actions select {
     width: 100%;
-    border: 1px solid #d8d1e3;
+    border: 1px solid var(--color-neutral300);
     border-radius: 10px;
     padding: 0.68rem 0.78rem;
     font-size: 0.95rem;
-    background: #fff;
-    color: #2f2441;
+    background: var(--color-neutral100);
+    color: var(--color-text-primary);
     transition: border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
@@ -179,8 +179,8 @@
 .admin-actions input:focus,
 .admin-actions select:focus {
     outline: none;
-    border-color: #bf95ea;
-    box-shadow: 0 0 0 4px rgba(191, 149, 234, 0.2);
+    border-color: var(--color-primary400);
+    box-shadow: 0 0 0 4px rgba(var(--color-primary300-rgb), 0.2);
 }
 
 .admin-actions {
@@ -197,21 +197,21 @@
 }
 
 .admin-page .button--text {
-    background: #f6f2fb;
-    border: 1px solid #e1d7ef;
-    color: #4a3962;
+    background: rgba(var(--color-primary100-rgb), 0.8);
+    border: 1px solid rgba(var(--color-primary200-rgb), 0.6);
+    color: var(--color-primary600);
 }
 
 .admin-page .button--text:hover {
-    background: #eee6f8;
+    background: rgba(var(--color-primary200-rgb), 0.5);
 }
 
 .admin-table-wrapper {
     border: 1px solid rgba(var(--color-neutral300-rgb), 0.85);
     border-radius: 14px;
     overflow: auto;
-    background: #fff;
-    box-shadow: 0 12px 30px rgba(20, 8, 36, 0.06);
+    background: var(--color-neutral100);
+    box-shadow: var(--shadow-card);
 }
 
 .admin-table {
@@ -224,15 +224,15 @@
 .admin-table td {
     text-align: left;
     padding: 0.9rem 0.95rem;
-    border-bottom: 1px solid #f1edf6;
+    border-bottom: 1px solid rgba(var(--color-primary100-rgb), 0.8);
 }
 
 .admin-table th {
     position: sticky;
     top: 0;
     z-index: 1;
-    background: #faf8fd;
-    color: #5d4b78;
+    background: rgba(var(--color-primary100-rgb), 0.6);
+    color: var(--color-primary600);
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -258,13 +258,13 @@
 }
 
 .status-pill.active {
-    background: #e8f9ef;
-    color: #0f6b43;
+    background: rgba(var(--color-success100-rgb), 0.9);
+    color: var(--color-success600);
 }
 
 .status-pill.inactive {
-    background: #f1edf6;
-    color: #5c4e71;
+    background: rgba(var(--color-primary100-rgb), 0.9);
+    color: var(--color-primary600);
 }
 
 .admin-error-msg,
@@ -273,19 +273,19 @@
     padding: 0.78rem 0.95rem;
     border-radius: 10px;
     border: 1px solid transparent;
-    box-shadow: 0 6px 16px rgba(16, 10, 30, 0.04);
+    box-shadow: var(--shadow-card);
 }
 
 .admin-error-msg {
-    background: #fff1f4;
-    border-color: #fbc8d5;
-    color: #a31343;
+    background: rgba(var(--color-error100-rgb), 0.8);
+    border-color: rgba(var(--color-error200-rgb), 0.8);
+    color: var(--color-error600);
 }
 
 .admin-success-msg {
-    background: #edfcf5;
-    border-color: #aae9cb;
-    color: #086145;
+    background: rgba(var(--color-success100-rgb), 0.85);
+    border-color: rgba(var(--color-success200-rgb), 0.8);
+    color: var(--color-success600);
 }
 
 .admin-loading {
@@ -295,9 +295,9 @@
     border: 1px solid rgba(var(--color-neutral300-rgb), 0.8);
     border-radius: 14px;
     text-align: center;
-    color: #5d5270;
-    background: #fff;
-    box-shadow: 0 10px 26px rgba(24, 8, 40, 0.06);
+    color: var(--color-text-secondary);
+    background: var(--color-neutral100);
+    box-shadow: var(--shadow-card);
 }
 
 .sr-only {

@@ -28,11 +28,15 @@ export const purchaseService = {
     /**
      * Creates a new purchase. Decreases stock and optionally applies a promotion.
      * @param {Array<{productId: number, quantity: number, promotionId?: number}>} items
+     * @param {number|null} userId - Required when the caller is ADMIN; ignored for regular users.
      */
-    createPurchase: async (items) => {
+    createPurchase: async (items, userId = null) => {
+        const body = { items };
+        // The backend mandates userId for ADMIN callers; harmless for regular users.
+        if (userId !== null && userId !== undefined) body.userId = userId;
         const data = await apiFetch("/purchases", {
             method: "POST",
-            body: JSON.stringify({ items }),
+            body: JSON.stringify(body),
         });
         return data ? mapPurchase(data) : null;
     },

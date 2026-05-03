@@ -57,7 +57,7 @@ export function usePurchaseDetail(purchaseId) {
             // 2. Fetch Products to resolve images/descriptions (enrichment)
             // This happens in background; errors here shouldn't block the main view.
             try {
-                const allProducts = await productService.getAllProducts();
+                const { products: allProducts } = await productService.getAllProducts(null, 0, 100);
                 const pMap = {};
                 allProducts.forEach(p => {
                     pMap[p.id] = p;

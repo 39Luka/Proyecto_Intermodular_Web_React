@@ -7,14 +7,14 @@ export default function Footer() {
         <div className="footer__column">
           <h3 className="footer__title">La Croassantina</h3>
           <p className="footer__text">
-            Hojaldre, cafe y productos recien hechos con una experiencia digital mas cuidada.
+            Hojaldre, café y productos recién hechos con una experiencia digital más cuidada.
           </p>
         </div>
 
         <div className="footer__column">
           <h3 className="footer__title">Explorar</h3>
           <Link className="footer__link" to="/home">Inicio</Link>
-          <Link className="footer__link" to="/products">Catalogo</Link>
+          <Link className="footer__link" to="/products">Catálogo</Link>
           <Link className="footer__link" to="/promo">Promociones</Link>
         </div>
 

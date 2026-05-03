@@ -29,12 +29,12 @@ function AdminPromotions() {
         try {
             setLoading(true);
             setError("");
-            const [promotionsData, productsData] = await Promise.all([
+            const [promotionsData, productsResult] = await Promise.all([
                 promotionService.getAllPromotions(),
                 productService.getAllProducts(),
             ]);
             setPromotions(promotionsData);
-            setProducts(productsData);
+            setProducts(productsResult.products);
         } catch (err) {
             setError(err.message || "No se pudieron cargar las promociones.");
         } finally {
@@ -65,9 +65,9 @@ function AdminPromotions() {
             const created = await promotionService.createPercentagePromotion(payload);
             setPromotions((prev) => [created, ...prev]);
             setForm(initialForm);
-            setMessage("Promocion creada correctamente.");
+            setMessage("Promoción creada correctamente.");
         } catch (err) {
-            setError(err.message || "No se pudo crear la promocion.");
+            setError(err.message || "No se pudo crear la promoción.");
         } finally {
             setSaving(false);
         }
@@ -81,9 +81,9 @@ function AdminPromotions() {
                     item.id === promotion.id ? { ...item, active: !promotion.active } : item
                 ))
             );
-            setMessage("Estado de promocion actualizado.");
+            setMessage("Estado de promoción actualizado.");
         } catch (err) {
-            setError(err.message || "No se pudo actualizar la promocion.");
+            setError(err.message || "No se pudo actualizar la promoción.");
         }
     }
 
@@ -94,7 +94,7 @@ function AdminPromotions() {
             <header className="admin-page-header">
                 <div>
                     <Link to="/admin" className="back-link">Volver al panel</Link>
-                    <h1 id="admin-promotions-title">Gestion de promociones</h1>
+                    <h1 id="admin-promotions-title">Gestión de promociones</h1>
                 </div>
             </header>
 
@@ -102,7 +102,7 @@ function AdminPromotions() {
             {message && <p className="admin-success-msg" aria-live="polite">{message}</p>}
 
             <form className="admin-form-card admin-stack" onSubmit={handleCreate}>
-                <h2>Nueva promocion</h2>
+                <h2>Nueva promoción</h2>
                 <div className="admin-form-grid">
                     <div className="admin-form-field">
                         <label htmlFor="productId">Producto</label>
@@ -140,13 +140,13 @@ function AdminPromotions() {
                 </div>
 
                 <div className="admin-form-field">
-                    <label htmlFor="description">Descripcion</label>
+                    <label htmlFor="description">Descripción</label>
                     <textarea id="description" name="description" rows="3" value={form.description} onChange={handleChange} required />
                 </div>
 
                 <div className="admin-actions">
                     <button type="submit" className="button button--primary" disabled={saving}>
-                        {saving ? "Guardando..." : "Crear promocion"}
+                        {saving ? "Guardando..." : "Crear promoción"}
                     </button>
                 </div>
             </form>
@@ -156,7 +156,7 @@ function AdminPromotions() {
                     <caption className="sr-only">Tabla de promociones</caption>
                     <thead>
                         <tr>
-                            <th scope="col">Descripcion</th>
+                            <th scope="col">Descripción</th>
                             <th scope="col">Producto</th>
                             <th scope="col">Descuento</th>
                             <th scope="col">Vigencia</th>

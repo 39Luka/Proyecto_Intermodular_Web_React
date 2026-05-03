@@ -1,64 +1,83 @@
-import { useState, useEffect } from "react";
-import CardVertical from "../components/cards/CardVertical";
+import { useState, useMemo } from "react";
 import ProductSection from "../components/sections/ProductSection";
+import CardVertical from "../components/cards/CardVertical";
 import { useProducts } from "../hooks/useProducts";
-import { categoryService } from "../services/categoryService";
+import { useCategories } from "../hooks/useCategories";
 
 function Products() {
-    const [categories, setCategories] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const { products, loading, error } = useProducts(selectedCategory);
+    const [page, setPage] = useState(0);
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    
+    const { products, loading, error, totalPages } = useProducts(selectedCategoryId, page, 12);
+    const { categories, loading: categoriesLoading } = useCategories();
 
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const data = await categoryService.getCategories();
-                setCategories(data);
-            } catch (err) {
-                console.error("Failed to load categories:", err);
-            }
-        };
-        fetchCategories();
-    }, []);
+    const handleCategoryChange = (id) => {
+        setSelectedCategoryId(id);
+        setPage(0);
+    };
 
-    if (loading && !products.length) return <div className="status-message">Cargando productos...</div>;
-    if (error) return <div className="status-message status-message--error">Error: {error}</div>;
+    const pagination = useMemo(() => {
+        if (totalPages <= 1) return null;
+        return (
+            <div className="pagination">
+                <button 
+                    className="button button--secondary" 
+                    disabled={page === 0} 
+                    onClick={() => setPage(p => p - 1)}
+                >
+                    Anterior
+                </button>
+                <span className="pagination__info">Página {page + 1} de {totalPages}</span>
+                <button 
+                    className="button button--secondary" 
+                    disabled={page >= totalPages - 1} 
+                    onClick={() => setPage(p => p + 1)}
+                >
+                    Siguiente
+                </button>
+            </div>
+        );
+    }, [page, totalPages]);
 
     return (
         <div className="catalog-page">
             <section className="page-intro">
-                <p className="page-intro__eyebrow">Catalogo diario</p>
-                <h1 className="page-intro__title">Una seleccion pensada para entrar por los ojos.</h1>
+                <p className="page-intro__eyebrow">Catálogo</p>
+                <h1 className="page-intro__title">El mostrador completo, organizado por categorías.</h1>
                 <p className="page-intro__description">
-                    Filtra por familia y explora cada pieza con una presentacion mas clara, apetecible y facil de comprar.
+                    Filtra por tipo de masa o elaboración para encontrar exactamente lo que te apetece hoy.
                 </p>
             </section>
 
-            <section className="catalog-filters">
+            <div className="catalog-filters">
                 <button
-                    className={`button ${!selectedCategory ? "button--primary" : "button--secondary"}`}
-                    onClick={() => setSelectedCategory(null)}
+                    className={`button ${selectedCategoryId === null ? "button--primary" : "button--secondary"}`}
+                    onClick={() => handleCategoryChange(null)}
                 >
-                    Todos
+                    Todo
                 </button>
-                {categories.map((category) => (
+                {!categoriesLoading && categories.map(cat => (
                     <button
-                        key={category.id}
-                        className={`button ${selectedCategory === category.id ? "button--primary" : "button--secondary"}`}
-                        onClick={() => setSelectedCategory(category.id)}
+                        key={cat.id}
+                        className={`button ${selectedCategoryId === cat.id ? "button--primary" : "button--secondary"}`}
+                        onClick={() => handleCategoryChange(cat.id)}
                     >
-                        {category.name}
+                        {cat.name}
                     </button>
                 ))}
-            </section>
+            </div>
 
             <ProductSection
-                title="Nuestro catalogo"
-                eyebrow="Seleccion"
-                description="Productos preparados para una experiencia mas visual, ordenada y comercial."
+                title={selectedCategoryId ? categories.find(c => c.id === selectedCategoryId)?.name : "Todos los productos"}
+                eyebrow="Selección"
                 products={products}
+                loading={loading}
+                error={error}
                 CardComponent={CardVertical}
+                page="catalog"
             />
+
+            {pagination}
         </div>
     );
 }

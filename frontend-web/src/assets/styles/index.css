@@ -6,6 +6,7 @@
 
 @import "./components/ui/_buttons.css";
 @import "./components/ui/_states.css";
+@import "./components/ui/_pagination.css";
 @import "./components/cards/_card.css";
 @import "./components/layout/_header-footer.css";
 @import "./components/pages/_product-detail.css";

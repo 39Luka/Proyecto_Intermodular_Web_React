@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 const adminModules = [
     {
         title: "Productos",
-        description: "Gestiona catalogo, stock y precios.",
+        description: "Gestiona catálogo, stock y precios.",
         path: "/admin/products",
     },
     {
-        title: "Categorias",
+        title: "Categorías",
         description: "Organiza tus productos por tipo.",
         path: "/admin/categories",
     },
@@ -21,6 +21,11 @@ const adminModules = [
         description: "Busca cuentas y cambia su estado.",
         path: "/admin/users",
     },
+    {
+        title: "Ventas",
+        description: "Revisa todas las compras y filtra por usuario.",
+        path: "/admin/purchases",
+    },
 ];
 
 function AdminDashboard() {
@@ -28,9 +33,9 @@ function AdminDashboard() {
         <section className="admin-page" aria-labelledby="admin-dashboard-title">
             <header className="admin-page-header">
                 <div>
-                    <p className="admin-eyebrow">Administracion</p>
-                    <h1 id="admin-dashboard-title">Panel de administracion</h1>
-                    <p>Selecciona el modulo que quieres gestionar.</p>
+                    <p className="admin-eyebrow">Administración</p>
+                    <h1 id="admin-dashboard-title">Panel de administración</h1>
+                    <p>Selecciona el módulo que quieres gestionar.</p>
                 </div>
             </header>
 

@@ -23,7 +23,7 @@ function PurchaseDetail() {
     };
 
     const handleCancel = async () => {
-        if (!window.confirm("Estas seguro de cancelar esta compra?")) return;
+        if (!window.confirm("¿Estás seguro de cancelar esta compra?")) return;
         try {
             const { purchaseService } = await import("../services/purchaseService");
             await purchaseService.cancelPurchase(id);
@@ -41,9 +41,9 @@ function PurchaseDetail() {
         <div className="commerce-page">
             <section className="page-intro">
                 <p className="page-intro__eyebrow">Seguimiento</p>
-                <h1 className="page-intro__title">Detalle de compra con informacion mejor ordenada.</h1>
+                <h1 className="page-intro__title">Detalle de compra con información mejor ordenada.</h1>
                 <p className="page-intro__description">
-                    Estado, productos y acciones de la compra dentro de una vista mas clara y mas util.
+                    Estado, productos y acciones de la compra dentro de una vista más clara y más útil.
                 </p>
             </section>
 

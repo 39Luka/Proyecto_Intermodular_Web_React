@@ -20,6 +20,7 @@ import AdminProductForm from "../pages/admin/AdminProductForm";
 import AdminCategories from "../pages/admin/AdminCategories";
 import AdminPromotions from "../pages/admin/AdminPromotions";
 import AdminUsers from "../pages/admin/AdminUsers";
+import AdminPurchases from "../pages/admin/AdminPurchases";
 
 function AppRoutes() {
     return (
@@ -62,6 +63,7 @@ function AppRoutes() {
                     <Route path="categories" element={<AdminCategories />} />
                     <Route path="promotions" element={<AdminPromotions />} />
                     <Route path="users" element={<AdminUsers />} />
+                    <Route path="purchases" element={<AdminPurchases />} />
                 </Route>
 
                 <Route path="*" element={<Navigate to="/home" replace />} />

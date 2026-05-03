@@ -1,54 +1,75 @@
-import CardVertical from "../components/cards/CardVertical";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import ProductSection from "../components/sections/ProductSection";
-import { useTopSelling } from "../hooks/useProducts";
-import { Link } from "react-router-dom";
-
-const highlights = [
-    { label: "Hecho cada manana", value: "100%" },
-    { label: "Recogida preparada", value: "Rapida" },
-    { label: "Producto estrella", value: "Croissant" },
-];
+import CardVertical from "../components/cards/CardVertical";
+import { useProducts, useTopSelling } from "../hooks/useProducts";
 
 function Home() {
-    const { products, loading, error } = useTopSelling();
+    const navigate = useNavigate();
+    const { products: latest, loading: loadLatest, error: errLatest } = useProducts(null, 0, 4);
+    const { products: top, loading: loadTop, error: errTop } = useTopSelling();
 
-    if (loading) return <div className="status-message">Cargando productos...</div>;
-    if (error) return <div className="status-message status-message--error">Error: {error}</div>;
+    const handleNavigate = (id) => navigate(`/products/${id}`);
+
+    const sections = useMemo(() => [
+        {
+            id: "latest",
+            title: "Novedades del Obrador",
+            eyebrow: "Recién Salido",
+            description: "Las últimas creaciones artesanales listas para disfrutar.",
+            products: latest,
+            loading: loadLatest,
+            error: errLatest
+        },
+        {
+            id: "top",
+            title: "Favoritos de la Casa",
+            eyebrow: "Lo más Vendido",
+            description: "Los productos que nuestros clientes eligen día tras día.",
+            products: top.slice(0, 4),
+            loading: loadTop,
+            error: errTop
+        }
+    ], [latest, loadLatest, errLatest, top, loadTop, errTop]);
 
     return (
-        <>
+        <div className="catalog-page">
             <section className="home-hero">
                 <div className="home-hero__copy">
-                    <p className="home-hero__eyebrow">Panaderia digital con alma de obrador</p>
-                    <h1 className="home-hero__title">Hojaldre serio, cafe bueno y una tienda que por fin se siente premium.</h1>
+                    <p className="home-hero__eyebrow">Tradición en cada bocado</p>
+                    <h1 className="home-hero__title">Pan y repostería artesanal.</h1>
                     <p className="home-hero__description">
-                        Seleccionamos las piezas mas deseadas del dia y las presentamos con una experiencia mas limpia,
-                        mas calida y mucho mejor pensada para comprar.
+                        Disfruta de productos horneados cada mañana con ingredientes naturales y procesos tradicionales.
                     </p>
-                    <div className="home-hero__actions">
-                        <Link className="button button--primary" to="/products">Ver catalogo</Link>
-                        <Link className="button button--secondary" to="/promo">Explorar promociones</Link>
-                    </div>
                 </div>
 
                 <div className="home-hero__panel">
-                    {highlights.map((item) => (
-                        <div className="home-hero__metric" key={item.label}>
-                            <span className="home-hero__metric-value">{item.value}</span>
-                            <span className="home-hero__metric-label">{item.label}</span>
-                        </div>
-                    ))}
+                    <div className="home-hero__metric">
+                        <span className="home-hero__metric-value">100%</span>
+                        <span className="home-hero__metric-label">Natural</span>
+                    </div>
+                    <div className="home-hero__metric">
+                        <span className="home-hero__metric-value">24h</span>
+                        <span className="home-hero__metric-label">Reposo</span>
+                    </div>
                 </div>
             </section>
 
-            <ProductSection
-                title="Lo mas buscado del obrador"
-                eyebrow="Favoritos"
-                description="Una seleccion con salida real: piezas que la gente repite, regala y vuelve a pedir."
-                products={products}
-                CardComponent={CardVertical}
-            />
-        </>
+            {sections.map(section => (
+                <ProductSection
+                    key={section.id}
+                    title={section.title}
+                    eyebrow={section.eyebrow}
+                    description={section.description}
+                    products={section.products}
+                    loading={section.loading}
+                    error={section.error}
+                    CardComponent={CardVertical}
+                    onNavigate={handleNavigate}
+                    page="home"
+                />
+            ))}
+        </div>
     );
 }
 

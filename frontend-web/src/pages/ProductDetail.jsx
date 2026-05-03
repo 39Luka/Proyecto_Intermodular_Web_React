@@ -18,8 +18,8 @@ function ProductDetail() {
 
   const name = slugify(product.title || product.nombre, { lower: true, strict: true });
 
-  const handleAddToCart = () => {
-    addToCart(product, 1);
+  const handleAddToCart = (quantity) => {
+    addToCart(product, quantity);
     navigate("/cart");
   };
 

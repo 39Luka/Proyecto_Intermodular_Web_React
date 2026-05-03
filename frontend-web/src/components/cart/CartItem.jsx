@@ -28,6 +28,7 @@ function CartItem({
                     image={product.image}
                     detailLeft={`Precio base ${unitPrice.toFixed(2)} EUR`}
                     detailRight={`Subtotal ${(finalPrice * quantity).toFixed(2)} EUR`}
+                    className="card-horizontal--cart"
                 />
 
                 {promotions.length > 0 && (
@@ -54,6 +55,7 @@ function CartItem({
                 <input
                     type="number"
                     min="1"
+                    max={product.stock || undefined}
                     value={quantity}
                     onChange={(event) => onQuantityChange(product.id, parseInt(event.target.value) || 1)}
                     className="form-input w-60"

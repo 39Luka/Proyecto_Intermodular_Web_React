@@ -22,9 +22,10 @@ export function usePromotions() {
                 setLoading(true);
                 // Import productService here to avoid circular deps
                 const { productService } = await import("../services/productService");
-                const products = await productService.getAllProducts();
+                const { products } = await productService.getAllProducts();
+                console.log("usePromotions: products type:", typeof products, "isArray:", Array.isArray(products), products);
 
-                if (products.length === 0) {
+                if (!products || !Array.isArray(products) || products.length === 0) {
                     setPromotions([]);
                     return;
                 }

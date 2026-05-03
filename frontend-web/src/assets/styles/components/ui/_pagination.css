@@ -1,0 +1,92 @@
+/* ─── Pagination ─────────────────────────────────────────────── */
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pagination__btn {
+    font-family: var(--font-body);
+    font-size: var(--text-b3);
+    font-weight: 600;
+    min-width: 2.4rem;
+    height: 2.4rem;
+    padding: 0 0.6rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--color-border);
+    background: var(--color-surface-strong);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        background 0.18s ease,
+        color 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.15s ease,
+        box-shadow 0.18s ease;
+}
+
+.pagination__btn:hover:not(:disabled) {
+    background: rgba(var(--color-primary100-rgb), 0.56);
+    color: var(--color-primary500);
+    border-color: var(--color-neutral300);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--color-primary500-rgb), 0.14);
+}
+
+.pagination__btn--active {
+    background: linear-gradient(135deg, var(--color-secondary500), var(--color-secondary600));
+    color: var(--color-text-on-primary);
+    border-color: transparent;
+    box-shadow: 0 6px 16px rgba(var(--color-secondary500-rgb), 0.28);
+    transform: none;
+    pointer-events: none;
+}
+
+.pagination__btn--nav {
+    font-size: 1.2rem;
+    font-weight: 400;
+    min-width: 2.4rem;
+}
+
+.pagination__btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.pagination__ellipsis {
+    font-size: var(--text-b3);
+    color: var(--color-neutral500);
+    padding: 0 0.2rem;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    height: 2.4rem;
+}
+
+/* ─── Catalog Pagination Wrapper ─────────────────────────────── */
+
+.catalog-pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2.5rem 0 1rem;
+}
+
+.catalog-pagination__info {
+    font-family: var(--font-body);
+    font-size: var(--text-b4);
+    color: var(--color-text-secondary);
+    letter-spacing: 0.01em;
+}
+
+.catalog-pagination__info strong {
+    color: var(--color-text-primary);
+    font-weight: 700;
+}

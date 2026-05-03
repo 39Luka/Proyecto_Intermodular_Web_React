@@ -9,7 +9,7 @@
 .auth-image {
     border-radius: 34px;
     background:
-        linear-gradient(rgba(46, 27, 18, 0.2), rgba(46, 27, 18, 0.45)),
+        linear-gradient(rgba(var(--color-primary600-rgb), 0.22), rgba(var(--color-primary600-rgb), 0.48)),
         url("https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200&q=80") center/cover;
     box-shadow: var(--shadow-card);
 }
@@ -24,7 +24,7 @@
     width: 100%;
     padding: 2rem;
     border-radius: 30px;
-    border: 1px solid rgba(var(--color-primary200-rgb), 0.55);
+    border: 1px solid var(--color-neutral300);
     background:
         linear-gradient(180deg, rgba(var(--color-neutral100-rgb), 0.98), rgba(var(--color-primary100-rgb), 0.42));
     box-shadow: var(--shadow-card);
@@ -42,7 +42,7 @@
 .auth-field label {
     display: block;
     margin-bottom: 0.42rem;
-    color: var(--color-secondary500);
+    color: var(--color-primary600);
     font-size: var(--text-b3);
     font-weight: 700;
 }
@@ -50,7 +50,7 @@
 .auth-field input {
     width: 100%;
     padding: 0.9rem 1rem;
-    border: 1px solid rgba(var(--color-primary200-rgb), 0.6);
+    border: 1px solid var(--color-neutral300);
     border-radius: 14px;
     background: rgba(var(--color-neutral100-rgb), 0.96);
     font-family: var(--font-body);
@@ -61,7 +61,7 @@
 .auth-field input:focus {
     outline: none;
     border-color: var(--color-primary400);
-    box-shadow: 0 0 0 4px rgba(var(--color-primary200-rgb), 0.22);
+    box-shadow: 0 0 0 4px rgba(var(--color-primary300-rgb), 0.22);
 }
 
 .auth-field input.error {

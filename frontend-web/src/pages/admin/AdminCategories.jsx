@@ -23,7 +23,7 @@ function AdminCategories() {
             const data = await categoryService.getCategories();
             setCategories(data);
         } catch (err) {
-            setError(err.message || "No se pudieron cargar las categorias.");
+            setError(err.message || "No se pudieron cargar las categorías.");
         } finally {
             setLoading(false);
         }
@@ -38,9 +38,9 @@ function AdminCategories() {
             const created = await categoryService.createCategory(newCategoryName.trim());
             setCategories((prev) => [...prev, created]);
             setNewCategoryName("");
-            setMessage("Categoria creada correctamente.");
+            setMessage("Categoría creada correctamente.");
         } catch (err) {
-            setError(err.message || "No se pudo crear la categoria.");
+            setError(err.message || "No se pudo crear la categoría.");
         } finally {
             setSaving(false);
         }
@@ -64,22 +64,22 @@ function AdminCategories() {
             );
             setEditingCategoryId(null);
             setEditingName("");
-            setMessage("Categoria actualizada correctamente.");
+            setMessage("Categoría actualizada correctamente.");
         } catch (err) {
-            setError(err.message || "No se pudo actualizar la categoria.");
+            setError(err.message || "No se pudo actualizar la categoría.");
         } finally {
             setSaving(false);
         }
     }
 
-    if (loading) return <div className="admin-loading">Cargando categorias...</div>;
+    if (loading) return <div className="admin-loading">Cargando categorías...</div>;
 
     return (
         <section className="admin-page admin-stack" aria-labelledby="admin-categories-title">
             <header className="admin-page-header">
                 <div>
                     <Link to="/admin" className="back-link">Volver al panel</Link>
-                    <h1 id="admin-categories-title">Gestion de categorias</h1>
+                    <h1 id="admin-categories-title">Gestión de categorías</h1>
                 </div>
             </header>
 
@@ -87,14 +87,14 @@ function AdminCategories() {
             {message && <p className="admin-success-msg" aria-live="polite">{message}</p>}
 
             <form className="admin-form-card admin-stack" onSubmit={handleCreate}>
-                <h2>Nueva categoria</h2>
+                <h2>Nueva categoría</h2>
                 <div className="admin-actions">
                     <input
                         type="text"
                         value={newCategoryName}
                         onChange={(event) => setNewCategoryName(event.target.value)}
-                        placeholder="Nombre de categoria"
-                        aria-label="Nombre de nueva categoria"
+                        placeholder="Nombre de categoría"
+                        aria-label="Nombre de nueva categoría"
                         required
                     />
                     <button type="submit" className="button button--primary" disabled={saving}>
@@ -105,7 +105,7 @@ function AdminCategories() {
 
             <div className="admin-table-wrapper">
                 <table className="admin-table">
-                    <caption className="sr-only">Tabla de categorias</caption>
+                    <caption className="sr-only">Tabla de categorías</caption>
                     <thead>
                         <tr>
                             <th scope="col">ID</th>
@@ -122,7 +122,7 @@ function AdminCategories() {
                                         <input
                                             value={editingName}
                                             onChange={(event) => setEditingName(event.target.value)}
-                                            aria-label={`Editar nombre de categoria ${category.id}`}
+                                            aria-label={`Editar nombre de categoría ${category.id}`}
                                         />
                                     ) : (
                                         category.name

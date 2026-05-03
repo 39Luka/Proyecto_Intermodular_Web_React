@@ -14,17 +14,20 @@ function Promotions() {
                 <p className="page-intro__eyebrow">Ofertas activas</p>
                 <h1 className="page-intro__title">Promociones con mejor contexto, no solo una lista plana.</h1>
                 <p className="page-intro__description">
-                    Cada oferta se presenta como una oportunidad real de compra, con lectura mas clara y mejor ritmo visual.
+                    Cada oferta se presenta como una oportunidad real de compra, con lectura más clara y mejor ritmo visual.
                 </p>
             </section>
 
             <ProductSection
                 title="Promociones disponibles"
                 eyebrow="Ahorro"
-                description="Descuentos vigentes para aprovechar en los productos con mas salida."
+                description="Descuentos vigentes para aprovechar en los productos con más salida."
                 products={promotions}
                 page={null}
                 CardComponent={CardHorizontal}
+                emptyVariant="empty-state--accent"
+                emptyTitle="No hay promociones activas."
+                emptyDescription="Las ofertas aparecerán aquí."
             />
         </div>
     );

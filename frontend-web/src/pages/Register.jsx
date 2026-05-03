@@ -40,8 +40,8 @@ function Register() {
                     <form onSubmit={handleSubmit} noValidate>
                         <FormField name="name" label="Nombre de usuario" type="text" validation={validation} />
                         <FormField name="email" label="Email" type="email" validation={validation} />
-                        <FormField name="password" label="Contrasena" type="password" validation={validation} />
-                        <FormField name="confirmPassword" label="Repite contrasena" type="password" validation={validation} />
+                        <FormField name="password" label="Contraseña" type="password" validation={validation} />
+                        <FormField name="confirmPassword" label="Repite contraseña" type="password" validation={validation} />
 
                         {serverError && <p className="auth-error" role="alert">{serverError}</p>}
 
@@ -51,7 +51,7 @@ function Register() {
                     </form>
 
                     <p className="auth-link">
-                        Ya tienes cuenta? <Link to="/login">Inicia sesion</Link>
+                        ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
                     </p>
                 </div>
             </div>

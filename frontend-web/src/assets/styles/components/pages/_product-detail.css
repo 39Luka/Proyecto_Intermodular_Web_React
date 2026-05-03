@@ -15,9 +15,9 @@
     grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
     gap: 1.25rem;
     padding: 1.25rem;
-    background: rgba(var(--color-neutral100-rgb), 0.92);
+    background: rgba(var(--color-neutral100-rgb), 0.98);
     border-radius: 32px;
-    border: 1px solid rgba(var(--color-primary200-rgb), 0.55);
+    border: 1px solid rgba(var(--color-neutral300-rgb), 0.65);
     box-shadow: var(--shadow-card);
 }
 
@@ -27,8 +27,8 @@
     border-radius: 24px;
     overflow: hidden;
     background:
-        radial-gradient(circle at top right, rgba(var(--color-primary100-rgb), 0.85), transparent 35%),
-        linear-gradient(180deg, rgba(var(--color-neutral100-rgb), 0.9), rgba(var(--color-primary100-rgb), 0.78));
+        radial-gradient(circle at top right, rgba(var(--color-secondary100-rgb), 0.28), transparent 32%),
+        linear-gradient(180deg, rgba(var(--color-neutral100-rgb), 0.98), rgba(var(--color-neutral100-rgb), 0.94));
 }
 
 .product-detail__image {
@@ -50,7 +50,7 @@
 
 .product-detail__eyebrow {
     margin: 0;
-    color: var(--color-primary500);
+    color: var(--color-secondary500);
     font-size: var(--text-b4);
     line-height: var(--text-b4-line);
     text-transform: uppercase;
@@ -62,7 +62,7 @@
     margin: 0;
     font-size: clamp(2rem, 4vw, 3.4rem);
     line-height: 1.04;
-    color: var(--color-secondary600);
+    color: var(--color-text-primary);
 }
 
 .product-detail__badges {
@@ -73,8 +73,8 @@
     display: inline-flex;
     align-items: center;
     padding: 0.38rem 0.8rem;
-    background: rgba(var(--color-secondary500-rgb), 0.9);
-    color: #fffdfa;
+    background: rgba(var(--color-secondary200-rgb), 0.82);
+    color: var(--color-secondary600);
     border-radius: 999px;
     font-size: var(--text-b4);
     font-weight: 700;
@@ -104,13 +104,31 @@
 .product-detail__purchase-card {
     padding: 1rem;
     border-radius: 22px;
-    background: linear-gradient(180deg, rgba(var(--color-neutral100-rgb), 0.98), rgba(var(--color-primary100-rgb), 0.6));
-    border: 1px solid rgba(var(--color-primary200-rgb), 0.5);
+    background: rgba(var(--color-neutral100-rgb), 0.99);
+    border: 1px solid rgba(var(--color-neutral300-rgb), 0.72);
 }
 
 .product-detail__purchase-card {
     display: grid;
     gap: 0.9rem;
+}
+
+.product-detail__quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(var(--color-neutral100-rgb), 0.99);
+    border: 1px solid rgba(var(--color-neutral300-rgb), 0.72);
+    border-radius: 18px;
+}
+
+.product-detail__quantity-selector label {
+    font-size: var(--text-b4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--color-text-secondary);
 }
 
 .product-detail__purchase-eyebrow,
@@ -129,7 +147,7 @@
 .stock-value {
     margin-top: 0.35rem;
     display: block;
-    color: var(--color-primary600);
+    color: var(--color-secondary500);
     font-family: var(--font-heading);
     font-size: 1.55rem;
     line-height: 1.1;
@@ -137,8 +155,8 @@
 }
 
 .product-detail__add-to-cart {
-    background: linear-gradient(135deg, var(--color-primary500), var(--color-primary600));
-    color: #fffdfa;
+    background: linear-gradient(135deg, var(--color-secondary400), var(--color-secondary500));
+    color: var(--color-text-on-primary);
     font-weight: 700;
     font-size: 1rem;
     padding: 0.95rem 1rem;
@@ -146,7 +164,7 @@
     border-radius: 999px;
     cursor: pointer;
     width: 100%;
-    box-shadow: 0 16px 28px rgba(var(--color-primary500-rgb), 0.22);
+    box-shadow: 0 16px 28px rgba(var(--color-secondary500-rgb), 0.28);
 }
 
 .product-detail__add-to-cart:hover {

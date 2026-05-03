@@ -1,7 +1,11 @@
 import { formatDate, formatPrice, formatStatus } from "./formatters";
 
+export const DEFAULT_PRODUCT_IMAGE = "/images/product-fallback-croissant.png";
+
 export const mapProduct = (backendProduct) => {
     if (!backendProduct) return null;
+
+    const image = backendProduct.imageUrl || backendProduct.image || DEFAULT_PRODUCT_IMAGE;
 
     return {
         ...backendProduct,
@@ -11,8 +15,7 @@ export const mapProduct = (backendProduct) => {
         stock: backendProduct.stock ?? null,
         active: backendProduct.active ?? true,
         category: backendProduct.category || null,
-        image: backendProduct.imageUrl || backendProduct.image ||
-            "https://via.placeholder.com/140x140/e5e7eb/6b7280?text=Producto",
+        image,
     };
 };
 
@@ -22,7 +25,7 @@ export const mapPromotion = (backendPromotion) => {
     const discount = backendPromotion.discountPercentage ?? null;
     return {
         ...backendPromotion,
-        title: backendPromotion.description || "Promocion sin titulo",
+        title: backendPromotion.description || "Promoción sin título",
         description: discount != null ? `Descuento: ${discount}%` : "Descuento: N/A",
         detailRight: backendPromotion.endDate ? `Hasta: ${formatDate(backendPromotion.endDate)}` : "",
         detailLeft: backendPromotion.productName || "Oferta especial",

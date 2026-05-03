@@ -12,7 +12,7 @@ h6 {
 h1,
 h2,
 h3 {
-    color: var(--color-secondary600);
+    color: var(--color-text-primary);
     font-weight: var(--font-heading-bold);
 }
 
@@ -34,7 +34,7 @@ h3 {
 h4,
 h5,
 h6 {
-    color: var(--color-secondary500);
+    color: var(--color-primary600);
     font-weight: var(--font-heading-medium);
 }
 

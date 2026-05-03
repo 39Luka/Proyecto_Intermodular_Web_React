@@ -46,8 +46,8 @@ section {
     border: 1px solid rgba(var(--color-primary200-rgb), 0.55);
     border-radius: 28px;
     background:
-        linear-gradient(135deg, rgba(var(--color-primary100-rgb), 0.9), rgba(var(--color-neutral100-rgb), 0.95)),
-        rgba(var(--color-neutral100-rgb), 0.9);
+        linear-gradient(135deg, rgba(var(--color-neutral100-rgb), 0.97), rgba(var(--color-primary100-rgb), 0.64)),
+        rgba(var(--color-neutral100-rgb), 0.94);
     box-shadow: var(--shadow-card);
 }
 

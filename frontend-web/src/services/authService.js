@@ -29,4 +29,17 @@ export const authService = {
         }, true); // skipAuth = true (public endpoint)
         return data;
     },
+
+    /**
+     * Refreshes the access token using the refresh token.
+     * @param {string} refreshToken
+     * @returns {Promise<{ token: string, refreshToken: string, expiresIn: number }>}
+     */
+    refreshToken: async (refreshToken) => {
+        const data = await apiFetch("/auth/refresh", {
+            method: "POST",
+            body: JSON.stringify({ refreshToken }),
+        }, true); // skipAuth = true (don't send Authorization header)
+        return data;
+    },
 };

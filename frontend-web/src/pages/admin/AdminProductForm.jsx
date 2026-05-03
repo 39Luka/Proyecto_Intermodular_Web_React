@@ -28,7 +28,7 @@ function AdminProductForm() {
             const data = await categoryService.getCategories();
             setCategories(data);
         } catch (err) {
-            setError(err.message || "No se pudieron cargar las categorias.");
+            setError(err.message || "No se pudieron cargar las categorías.");
         }
     }, []);
 
@@ -113,9 +113,9 @@ function AdminProductForm() {
                     </div>
 
                     <div className="admin-form-field">
-                        <label htmlFor="categoryId">Categoria</label>
+                        <label htmlFor="categoryId">Categoría</label>
                         <select id="categoryId" name="categoryId" value={formData.categoryId} onChange={handleChange} required>
-                            <option value="">Selecciona una categoria</option>
+                            <option value="">Selecciona una categoría</option>
                             {categories.map((category) => (
                                 <option key={category.id} value={category.id}>{category.name}</option>
                             ))}
@@ -139,7 +139,7 @@ function AdminProductForm() {
                 </div>
 
                 <div className="admin-form-field">
-                    <label htmlFor="description">Descripcion</label>
+                    <label htmlFor="description">Descripción</label>
                     <textarea id="description" name="description" rows="4" value={formData.description} onChange={handleChange} required />
                 </div>
 
