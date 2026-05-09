@@ -22,7 +22,7 @@ const processQueue = (err, token = null) => {
 
 export async function apiFetch(endpoint, options = {}, skipAuth = false) {
     const headers = { "Content-Type": "application/json", ...options.headers };
-    
+
     if (!skipAuth) {
         const token = localStorage.getItem("authToken");
         if (token) headers.Authorization = `Bearer ${token}`;

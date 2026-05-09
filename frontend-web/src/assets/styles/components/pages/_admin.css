@@ -71,6 +71,12 @@
     transition: color 0.2s ease;
 }
 
+.back-link::before {
+    content: "←";
+    font-size: 1.1em;
+    line-height: 1;
+}
+
 .back-link:hover {
     color: var(--color-primary500);
 }

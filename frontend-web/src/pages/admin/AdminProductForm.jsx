@@ -8,7 +8,7 @@ const initialForm = {
     description: "",
     price: "",
     stock: "",
-    imageUrl: "",
+    imageBase64: "",
     categoryId: "",
 };
 
@@ -46,7 +46,7 @@ function AdminProductForm() {
                 description: product.description || "",
                 price: product.price ?? "",
                 stock: product.stock ?? "",
-                imageUrl: product.imageUrl || "",
+                imageBase64: product.imageBase64 || product.image || product.imageUrl || "",
                 categoryId: product.categoryId || product.category?.id || "",
             });
         } catch (err) {
@@ -64,6 +64,17 @@ function AdminProductForm() {
     function handleChange(event) {
         const { name, value } = event.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
+    function handleFileChange(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setFormData(prev => ({ ...prev, imageBase64: reader.result }));
+        };
+        reader.readAsDataURL(file);
     }
 
     async function handleSubmit(event) {
@@ -134,8 +145,13 @@ function AdminProductForm() {
                 </div>
 
                 <div className="admin-form-field">
-                    <label htmlFor="imageUrl">URL de imagen</label>
-                    <input id="imageUrl" name="imageUrl" type="url" value={formData.imageUrl} onChange={handleChange} required />
+                    <label htmlFor="imageFile">Imagen del producto</label>
+                    <input id="imageFile" name="imageFile" type="file" accept="image/*" onChange={handleFileChange} />
+                    {formData.imageBase64 && (
+                        <div style={{ marginTop: '1rem' }}>
+                            <img src={formData.imageBase64} alt="Vista previa" style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'contain' }} />
+                        </div>
+                    )}
                 </div>
 
                 <div className="admin-form-field">

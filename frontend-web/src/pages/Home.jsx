@@ -16,7 +16,7 @@ function Home() {
             id: "latest",
             title: "Novedades del Obrador",
             eyebrow: "Recién Salido",
-            description: "Las últimas creaciones artesanales listas para disfrutar.",
+            description: "Nuestras últimas creaciones artesanales.",
             products: latest,
             loading: loadLatest,
             error: errLatest
@@ -25,7 +25,7 @@ function Home() {
             id: "top",
             title: "Favoritos de la Casa",
             eyebrow: "Lo más Vendido",
-            description: "Los productos que nuestros clientes eligen día tras día.",
+            description: "Los favoritos de nuestros clientes.",
             products: top.slice(0, 4),
             loading: loadTop,
             error: errTop
@@ -39,7 +39,7 @@ function Home() {
                     <p className="home-hero__eyebrow">Tradición en cada bocado</p>
                     <h1 className="home-hero__title">Pan y repostería artesanal.</h1>
                     <p className="home-hero__description">
-                        Disfruta de productos horneados cada mañana con ingredientes naturales y procesos tradicionales.
+                        Productos horneados cada mañana con ingredientes naturales.
                     </p>
                 </div>
 

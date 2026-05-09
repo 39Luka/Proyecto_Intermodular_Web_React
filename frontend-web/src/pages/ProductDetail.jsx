@@ -27,7 +27,7 @@ function ProductDetail() {
     <div className="product-detail-wrapper">
       <div className="product-detail-header">
         <button className="button button--secondary" onClick={() => navigate(-1)}>
-          Volver
+          ← Volver
         </button>
       </div>
 

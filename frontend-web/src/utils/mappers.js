@@ -1,11 +1,11 @@
 import { formatDate, formatPrice, formatStatus } from "./formatters";
 
-export const DEFAULT_PRODUCT_IMAGE = "/images/product-fallback-croissant.png";
+export const DEFAULT_PRODUCT_IMAGE = "/logo-croassantina.svg";
 
 export const mapProduct = (backendProduct) => {
     if (!backendProduct) return null;
 
-    const image = backendProduct.imageUrl || backendProduct.image || DEFAULT_PRODUCT_IMAGE;
+    const image = backendProduct.imageBase64 || backendProduct.imageUrl || backendProduct.image || DEFAULT_PRODUCT_IMAGE;
 
     return {
         ...backendProduct,

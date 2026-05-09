@@ -51,7 +51,7 @@ function PurchaseDetail() {
                 <div className="purchase-detail-header">
                     <h2 className="purchase-detail-title">Compra #{purchase.id}</h2>
                     <button className="button button--secondary" onClick={() => navigate(-1)}>
-                        Volver
+                        ← Volver
                     </button>
                 </div>
 

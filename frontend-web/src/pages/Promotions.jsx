@@ -5,9 +5,6 @@ import { usePromotions } from "../hooks/usePromotions";
 function Promotions() {
     const { promotions, loading, error } = usePromotions();
 
-    if (loading) return <div className="status-message">Cargando promociones...</div>;
-    if (error) return <div className="status-message status-message--error">Error: {error}</div>;
-
     return (
         <div className="commerce-page">
             <section className="page-intro">
@@ -23,11 +20,10 @@ function Promotions() {
                 eyebrow="Ahorro"
                 description="Descuentos vigentes para aprovechar en los productos con más salida."
                 products={promotions}
+                loading={loading}
+                error={error}
                 page={null}
                 CardComponent={CardHorizontal}
-                emptyVariant="empty-state--accent"
-                emptyTitle="No hay promociones activas."
-                emptyDescription="Las ofertas aparecerán aquí."
             />
         </div>
     );

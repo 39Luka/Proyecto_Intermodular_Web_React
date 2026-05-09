@@ -4,7 +4,7 @@ import { useAuth } from "../../hooks/useAuth";
 
 function Nav() {
     const { cartCount } = useCart();
-    const { isAdmin } = useAuth();
+    const { isAdmin, isAuthenticated } = useAuth();
 
     return (
         <nav className="header__nav" aria-label="main-navigation">
@@ -12,7 +12,7 @@ function Nav() {
             <NavLink className="button" to="/products">Catalogo</NavLink>
             <NavLink className="button" to="/promo">Promociones</NavLink>
             <NavLink className="button" to="/purchased">Pedidos</NavLink>
-            <NavLink className="button" to="/cart">Carrito {cartCount > 0 ? `(${cartCount})` : ""}</NavLink>
+            <NavLink className="button" to="/cart">Carrito {isAuthenticated && cartCount > 0 ? `(${cartCount})` : ""}</NavLink>
             {isAdmin && (
                 <NavLink className="button" to="/admin">Gestion</NavLink>
             )}

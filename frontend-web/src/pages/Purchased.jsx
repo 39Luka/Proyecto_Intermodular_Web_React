@@ -6,9 +6,6 @@ import { purchaseService } from "../services/purchaseService";
 function Purchased() {
     const { purchases, loading, error, refetch } = usePurchases();
 
-    if (loading) return <div className="status-message">Cargando compras...</div>;
-    if (error) return <div className="status-message status-message--error">Error: {error}</div>;
-
     return (
         <div className="commerce-page">
             <section className="page-intro">
@@ -24,6 +21,8 @@ function Purchased() {
                 eyebrow="Pedidos"
                 description="Seguimiento visual de lo que ya has comprado en el obrador."
                 products={purchases}
+                loading={loading}
+                error={error}
                 page="purchased"
                 CardComponent={CardHorizontal}
                 emptyTitle="Aún no hay pedidos."

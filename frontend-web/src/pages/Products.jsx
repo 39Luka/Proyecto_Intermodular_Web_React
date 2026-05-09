@@ -45,7 +45,7 @@ function Products() {
                 <p className="page-intro__eyebrow">Catálogo</p>
                 <h1 className="page-intro__title">El mostrador completo, organizado por categorías.</h1>
                 <p className="page-intro__description">
-                    Filtra por tipo de masa o elaboración para encontrar exactamente lo que te apetece hoy.
+                    Nuestra selección completa organizada por categorías.
                 </p>
             </section>
 
