@@ -39,14 +39,16 @@ function AdminDashboard() {
                 </div>
             </header>
 
-            <div className="admin-module-grid" role="list">
+            <ul className="admin-module-grid">
                 {adminModules.map((module) => (
-                    <Link key={module.path} to={module.path} className="admin-module-card" role="listitem">
-                        <h2>{module.title}</h2>
-                        <p>{module.description}</p>
-                    </Link>
+                    <li key={module.path}>
+                        <Link to={module.path} className="admin-module-card">
+                            <h2>{module.title}</h2>
+                            <p>{module.description}</p>
+                        </Link>
+                    </li>
                 ))}
-            </div>
+            </ul>
         </section>
     );
 }

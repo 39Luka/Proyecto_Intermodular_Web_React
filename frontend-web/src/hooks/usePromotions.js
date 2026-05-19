@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
 import { promotionService } from "../services/promotionService";
+import { useAuth } from "./useAuth";
 
 /**
- * Hook to fetch all active promotions visible to the current user.
+ * Hook para obtener todas las promociones activas visibles para el usuario actual.
  *
- * Strategy:
- * - GET /promotions/active requires a productId (public endpoint).
- * - We first fetch all products, then fetch active promotions for each one.
- * - Results are deduplicated by promotion ID.
+ * Estrategia:
+ * - GET /promotions/active requiere un productId (endpoint público).
+ * - Primero obtenemos todos los productos y luego obtenemos las promociones activas de cada uno.
+ * - Los resultados se deduplican según el ID de la promoción.
  *
  * @returns {{ promotions: Array, loading: boolean, error: string|null }}
  */
 export function usePromotions() {
+    const { user } = useAuth();
     const [promotions, setPromotions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20,22 +22,20 @@ export function usePromotions() {
         const fetchPromotions = async () => {
             try {
                 setLoading(true);
-                // Import productService here to avoid circular deps
+                // Importar productService aquí para evitar dependencias circulares
                 const { productService } = await import("../services/productService");
                 const { products } = await productService.getAllProducts();
-                console.log("usePromotions: products type:", typeof products, "isArray:", Array.isArray(products), products);
-
                 if (!products || !Array.isArray(products) || products.length === 0) {
                     setPromotions([]);
                     return;
                 }
 
-                // Fetch promotions for all products concurrently
+                // Obtener promociones para todos los productos de forma concurrente, pasando el userId para ignorar las promociones ya utilizadas
                 const allPromosResults = await Promise.allSettled(
-                    products.map((p) => promotionService.getActivePromotions(p.id))
+                    products.map((p) => promotionService.getActivePromotions(p.id, user?.id))
                 );
 
-                // Flatten and deduplicate by promotion ID
+                // Aplanar y deduplicar por el ID de la promoción
                 const seen = new Set();
                 const allPromotions = [];
                 for (const result of allPromosResults) {
@@ -51,7 +51,7 @@ export function usePromotions() {
 
                 setPromotions(allPromotions);
             } catch (err) {
-                console.error("Failed to fetch promotions", err);
+                console.error("Error al obtener las promociones", err);
                 setError(err.message);
             } finally {
                 setLoading(false);
@@ -59,7 +59,7 @@ export function usePromotions() {
         };
 
         fetchPromotions();
-    }, []);
+    }, [user?.id]);
 
     return { promotions, loading, error };
 }

@@ -1,5 +1,19 @@
+/**
+ * @fileoverview Contexto global de autenticación.
+ *
+ * Expone `AuthContext` y `AuthProvider`. El provider gestiona el ciclo de vida
+ * completo de la sesión: login, registro, logout y persistencia en `localStorage`.
+ *
+ * Flujo de login / registro:
+ * 1. Llama al servicio REST correspondiente.
+ * 2. Extrae el JWT y lo persiste en `localStorage`.
+ * 3. Decodifica el payload para construir el objeto `user` (id, email, role).
+ * 4. Si el payload no contiene `userId`, consulta el perfil por email para obtenerlo.
+ *
+ * @module AuthContext
+ */
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useState, useEffect, useCallback, useMemo } from "react";
+import { createContext, useState, useCallback, useMemo } from "react";
 import { authService } from "../services/authService";
 import { userService } from "../services/userService";
 
@@ -35,7 +49,7 @@ export function AuthProvider({ children }) {
         const stored = localStorage.getItem("user");
         return stored ? JSON.parse(stored) : null;
     });
-    const [loading, setLoading] = useState(false);
+    const loading = false; // Estado de carga simplificado ya que no se utiliza para la verificación asíncrona de autenticación aquí
 
     const login = useCallback(async (email, password) => {
         const data = await authService.login(email, password);
@@ -51,7 +65,7 @@ export function AuthProvider({ children }) {
             try {
                 const profile = await userService.getUserByEmail(loggedUser.email);
                 if (profile?.id) loggedUser = { ...loggedUser, id: profile.id };
-            } catch { /* Silent fail */ }
+            } catch { /* Error silenciado */ }
         }
 
         setUser(loggedUser);
@@ -73,7 +87,7 @@ export function AuthProvider({ children }) {
             try {
                 const profile = await userService.getUserByEmail(newUser.email);
                 if (profile?.id) newUser = { ...newUser, id: profile.id };
-            } catch { /* Silent fail */ }
+            } catch { /* Error silenciado */ }
         }
 
         setUser(newUser);

@@ -1,5 +1,27 @@
 import { useState } from "react";
 
+/**
+ * Panel de acciones de compra en el detalle de producto.
+ *
+ * Muestra el precio, la disponibilidad (stock o "Agotado"), un selector de
+ * cantidad numérico (limitado por el stock) y el botón "Añadir al carrito".
+ * Si el producto está agotado el botón queda deshabilitado.
+ *
+ * @component
+ * @param {Object}   props
+ * @param {Object}   props.product                  - Objeto producto.
+ * @param {number}   props.product.price             - Precio unitario en EUR.
+ * @param {number}   props.product.stock             - Unidades disponibles.
+ * @param {{name:string}} [props.product.category]   - Categoría del producto.
+ * @param {Function} props.onAddToCart               - Callback `(quantity: number) => void` al añadir al carrito.
+ * @returns {JSX.Element} Panel de precio, stock, selector de cantidad y botón de compra.
+ *
+ * @example
+ * <ProductActionCard
+ *   product={product}
+ *   onAddToCart={(qty) => addToCart(product, qty)}
+ * />
+ */
 function ProductActionCard({ product, onAddToCart }) {
     const { price, stock, category } = product;
     const [selectedQuantity, setSelectedQuantity] = useState(1);

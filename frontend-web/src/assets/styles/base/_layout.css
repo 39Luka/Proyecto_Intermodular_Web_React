@@ -42,7 +42,7 @@ section {
 .page-intro {
     display: grid;
     gap: 0.8rem;
-    padding: 2rem;
+    padding: 2.5rem 3rem;
     border: 1px solid rgba(var(--color-primary200-rgb), 0.55);
     border-radius: 28px;
     background:
@@ -62,19 +62,19 @@ section {
 
 .page-intro__title {
     margin: 0;
-    max-width: 10ch;
+    max-width: 50ch;
 }
 
 .page-intro__description {
     margin: 0;
-    max-width: 44rem;
+    max-width: 60rem;
     color: var(--color-text-secondary);
     font-size: var(--text-b1);
 }
 
 @media (max-width: 768px) {
     .app-container {
-        width: min(1200px, calc(100% - 1rem));
+        width: min(1200px, calc(100% - 1.5rem));
     }
 
     section {
@@ -82,7 +82,7 @@ section {
     }
 
     .page-intro {
-        padding: 1.35rem;
+        padding: 1.5rem;
         border-radius: 22px;
     }
 }

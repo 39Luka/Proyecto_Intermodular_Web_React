@@ -63,3 +63,7 @@
 
 .w-60 { width: 60px; }
 .flex-1 { flex: 1; }
+
+.display-none {
+    display: none !important;
+}

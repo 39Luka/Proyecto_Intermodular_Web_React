@@ -14,7 +14,13 @@ const ProtectedRoute = ({ children }) => {
     const location = useLocation();
 
     if (loading) {
-        return <div className="full-page-loader">Verificando sesión...</div>;
+        return (
+            <div className="section-loader-wrap section-loader-wrap--auth">
+                <div className="section-spinner" aria-label="Cargando..."></div>
+                <p className="section-loader-text">Verificando sesión...</p>
+                <p className="section-loader-subtext">Un momento por favor.</p>
+            </div>
+        );
     }
 
     if (!isAuthenticated) {

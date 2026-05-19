@@ -1,10 +1,28 @@
 import ProductSection from "../components/sections/ProductSection";
 import CardHorizontal from "../components/cards/CardHorizontal";
 import { usePurchases } from "../hooks/usePurchases";
-import { purchaseService } from "../services/purchaseService";
+import { useSearch } from "../context/SearchContext";
+import { useState, useMemo, useEffect } from "react";
+import Pagination from "../components/ui/Pagination";
 
 function Purchased() {
-    const { purchases, loading, error, refetch } = usePurchases();
+    const { appliedDates, setLoading } = useSearch();
+    const { purchases, loading, error } = usePurchases(appliedDates.start, appliedDates.end);
+    const [page, setPage] = useState(0);
+    const pageSize = 8; // Menos elementos por página para las compras ya que son tarjetas detalladas
+
+    // Señalar el estado de carga global a la cabecera
+    useEffect(() => {
+        setLoading(loading);
+        return () => setLoading(false);
+    }, [loading, setLoading]);
+
+    const totalPages = Math.max(1, Math.ceil(purchases.length / pageSize));
+
+    const paginatedPurchases = useMemo(() => {
+        const start = page * pageSize;
+        return purchases.slice(start, start + pageSize);
+    }, [purchases, page, pageSize]);
 
     return (
         <div className="commerce-page">
@@ -20,7 +38,7 @@ function Purchased() {
                 title="Mis compras"
                 eyebrow="Pedidos"
                 description="Seguimiento visual de lo que ya has comprado en el obrador."
-                products={purchases}
+                products={paginatedPurchases}
                 loading={loading}
                 error={error}
                 page="purchased"
@@ -28,6 +46,14 @@ function Purchased() {
                 emptyTitle="Aún no hay pedidos."
                 emptyDescription="Tu historial aparecerá aquí."
             />
+
+            {!loading && totalPages > 1 && (
+                <Pagination 
+                    currentPage={page} 
+                    totalPages={totalPages} 
+                    onPageChange={setPage} 
+                />
+            )}
         </div>
     );
 }

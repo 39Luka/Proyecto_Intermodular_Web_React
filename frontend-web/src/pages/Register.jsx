@@ -7,6 +7,7 @@ import { REGISTER_INITIAL_VALUES, REGISTER_VALIDATION_SCHEMA } from "../utils/va
 
 function Register() {
     const [serverError, setServerError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const { register } = useAuth();
 
@@ -22,11 +23,14 @@ function Register() {
             return;
         }
 
+        setIsLoading(true);
         try {
-            await register(validation.values.name, validation.values.email, validation.values.password);
+            await register(validation.values.email, validation.values.password);
             navigate("/home");
-        } catch {
-            setServerError("No se pudo registrar la cuenta. Prueba con otro email.");
+        } catch (err) {
+            setServerError(err.message || "No se pudo registrar la cuenta. Prueba con otro email.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -34,19 +38,26 @@ function Register() {
         <div className="auth-container">
             <div className="auth-image" aria-hidden="true" />
             <div className="auth-form-wrapper">
-                <div className="auth-form">
+                <div className={`auth-form ${isLoading ? "form-loading" : ""}`}>
                     <h1 className="auth-title">Crear cuenta</h1>
 
                     <form onSubmit={handleSubmit} noValidate>
-                        <FormField name="name" label="Nombre de usuario" type="text" validation={validation} />
+
                         <FormField name="email" label="Email" type="email" validation={validation} />
                         <FormField name="password" label="Contraseña" type="password" validation={validation} />
                         <FormField name="confirmPassword" label="Repite contraseña" type="password" validation={validation} />
 
                         {serverError && <p className="auth-error" role="alert">{serverError}</p>}
 
-                        <button type="submit" className="auth-submit" disabled={!validation.isFormValid()}>
-                            Crear cuenta
+                        <button type="submit" className="auth-submit" disabled={isLoading || !validation.isFormValid()}>
+                            {isLoading ? (
+                                <span className="loading-wrapper">
+                                    <span className="spinner-mini"></span>
+                                    Creando cuenta...
+                                </span>
+                            ) : (
+                                "Crear cuenta"
+                            )}
                         </button>
                     </form>
 

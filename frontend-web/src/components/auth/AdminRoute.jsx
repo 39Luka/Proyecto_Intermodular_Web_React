@@ -11,7 +11,13 @@ const AdminRoute = () => {
     const { user, isAdmin, loading } = useAuth();
 
     if (loading) {
-        return <div className="full-page-loader">Cargando verificación de administrador...</div>;
+        return (
+            <div className="section-loader-wrap section-loader-wrap--auth">
+                <div className="section-spinner" aria-label="Cargando..."></div>
+                <p className="section-loader-text">Verificando administrador...</p>
+                <p className="section-loader-subtext">Un momento por favor.</p>
+            </div>
+        );
     }
 
     if (!user) {
@@ -19,7 +25,6 @@ const AdminRoute = () => {
     }
 
     if (!isAdmin) {
-        console.warn("Acceso denegado: Se requiere rol ADMIN");
         return <Navigate to="/home" replace />;
     }
 

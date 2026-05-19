@@ -1,5 +1,19 @@
 import { Link } from "react-router-dom";
 
+/**
+ * Pie de página global de la aplicación.
+ *
+ * Muestra tres columnas con información de marca, enlaces de exploración
+ * y datos de contacto. Incluye el año actual calculado dinámicamente.
+ * No acepta props.
+ *
+ * @component
+ * @returns {JSX.Element} Elemento `<footer>` con columnas informativas.
+ *
+ * @example
+ * // Se incluye en el layout principal de la app
+ * <Footer />
+ */
 export default function Footer() {
   return (
     <footer className="footer">

@@ -62,7 +62,7 @@ export const LOGIN_VALIDATION_SCHEMA = {
 export const REGISTER_VALIDATION_SCHEMA = {
     name: ['required', { type: 'minLength', value: 3 }],
     email: ['required', 'email'],
-    password: ['required', { type: 'minLength', value: 6 }],
+    password: ['required', { type: 'minLength', value: 8 }, { type: 'maxLength', value: 72 }],
     confirmPassword: ['required', { type: 'match', value: 'password' }]
 };
 

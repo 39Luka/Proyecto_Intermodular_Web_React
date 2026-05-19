@@ -1,3 +1,12 @@
+/**
+ * @fileoverview Servicio REST para productos de la tienda.
+ *
+ * Operaciones de lectura (listado, detalle, top-selling) son públicas.
+ * Operaciones de escritura (crear, actualizar, parchear) requieren rol ADMIN.
+ * Todas las respuestas pasan por `mapProduct` y se enriquecen con la categoría.
+ *
+ * @module productService
+ */
 import { apiFetch } from "./api";
 import { categoryService } from "./categoryService";
 import { mapProduct } from "../utils/mappers";
@@ -38,18 +47,23 @@ async function enrichProductCategory(product) {
 
 export const productService = {
     /**
-     * Lists all products. The API requires pageable params (page + size).
-     * @param {number|null} categoryId - Optional category filter.
-     * @param {number} page - Page number (0-indexed).
-     * @param {number} size - Page size.
+     * Lista todos los productos con soporte de filtros (categoría, nombre) y paginación.
+     * La API requiere parámetros de paginación (page y size).
+     *
+     * @param {number|null} categoryId - Filtro opcional por ID de categoría.
+     * @param {number} page - Número de página (comienza en 0).
+     * @param {number} size - Tamaño de página.
+     * @param {string|null} name - Filtro opcional para buscar por coincidencia parcial de nombre.
+     * @param {string|null} sortBy - Campo por el cual ordenar.
+     * @param {string|null} order - Dirección del ordenamiento ("asc" o "desc").
+     * @returns {Promise<{ products: Array, totalPages: number, totalElements: number, currentPage: number }>}
      */
-    /**
-     * Lists products with full pagination metadata.
-     * Returns { products, totalPages, totalElements, currentPage }
-     */
-    getAllProducts: async (categoryId = null, page = 0, size = 12) => {
+    getAllProducts: async (categoryId = null, page = 0, size = 12, name = null, sortBy = null, order = null) => {
         const params = new URLSearchParams({ page, size });
         if (categoryId) params.set("categoryId", categoryId);
+        if (name) params.set("name", name);
+        if (sortBy) params.set("sortBy", sortBy);
+        if (order) params.set("order", order);
         const data = await apiFetch(`/products?${params.toString()}`, {}, true); // public
         const rawList = extractData(data).map(mapProduct);
         const products = await Promise.all(rawList.map(enrichProductCategory));
@@ -62,24 +76,26 @@ export const productService = {
     },
 
     getProductById: async (id) => {
-        if (!id) throw new Error("Product ID is required");
-        const data = await apiFetch(`/products/${id}`, {}, true); // public
+        if (!id) throw new Error("El ID del producto es requerido");
+        const data = await apiFetch(`/products/${id}`, {}, true); // público
         return data ? enrichProductCategory(mapProduct(data)) : null;
     },
 
     /**
-     * Returns the top selling products (from PAID purchases).
-     * If fewer than `size` top-selling products exist, fills the remaining
-     * slots with regular products so the home section always has content.
-     * @param {number} page
-     * @param {number} size
+     * Obtiene los productos más vendidos (basado en compras en estado PAID).
+     * Si existen menos productos más vendidos que el tamaño `size`, rellena los
+     * huecos restantes con productos regulares para asegurar que la sección de la Home siempre tenga contenido.
+     *
+     * @param {number} page - Número de página.
+     * @param {number} size - Cantidad de productos a recuperar.
+     * @returns {Promise<Array>} Listado de productos enriquecidos.
      */
     getTopSelling: async (page = 0, size = 6) => {
         const params = new URLSearchParams({ page, size });
         const data = await apiFetch(`/products/top-selling?${params.toString()}`, {}, true); // public
         const topSellingEntries = extractData(data);
 
-        // Fetch each top-selling product by its ID
+        // Obtener cada producto más vendido por su ID
         const productResults = await Promise.allSettled(
             topSellingEntries.map((entry) => productService.getProductById(entry.productId))
         );
@@ -88,7 +104,7 @@ export const productService = {
             .filter((result) => result.status === "fulfilled" && result.value)
             .map((result) => result.value);
 
-        // If we got fewer products than requested, pad with regular products
+        // Si obtuvimos menos productos de los solicitados, rellenamos con productos regulares
         if (topProducts.length < size) {
             try {
                 const topIds = new Set(topProducts.map((p) => p.id));
@@ -98,7 +114,7 @@ export const productService = {
                     .slice(0, size - topProducts.length);
                 return [...topProducts, ...extras];
             } catch {
-                // If fallback fails, return what we have
+                // Si la recuperación de respaldo falla, retornamos los que tenemos
             }
         }
 
@@ -106,8 +122,10 @@ export const productService = {
     },
 
     /**
-     * Admin-only: Creates a new product.
-     * @param {{ name, description, price, stock, imageUrl, categoryId }} payload
+     * Solo Admin: Crea un nuevo producto.
+     *
+     * @param {{ name: string, description: string, price: number, stock: number, imageUrl: string, categoryId: number }} payload - Datos del producto.
+     * @returns {Promise<Object|null>} El producto creado o null si falla.
      */
     createProduct: async (payload) => {
         const data = await apiFetch("/products", {
@@ -118,9 +136,11 @@ export const productService = {
     },
 
     /**
-     * Admin-only: Updates an existing product.
-     * @param {number} id
-     * @param {object} payload
+     * Solo Admin: Actualiza un producto existente.
+     *
+     * @param {number} id - ID del producto a actualizar.
+     * @param {object} payload - Nuevos datos del producto.
+     * @returns {Promise<Object|null>} El producto actualizado o null.
      */
     updateProduct: async (id, payload) => {
         const data = await apiFetch(`/products/${id}`, {
@@ -131,8 +151,10 @@ export const productService = {
     },
 
     /**
-     * Admin-only: Deletes a product.
-     * @param {number} id
+     * Solo Admin: Modifica el estado activo de un producto (borrado lógico).
+     *
+     * @param {number} id - ID del producto.
+     * @param {boolean} active - Estado de activación.
      */
     patchProduct: async (id, active) => {
         await apiFetch(`/products/${id}`, { method: "PATCH", body: JSON.stringify({ active }) });

@@ -1,7 +1,7 @@
 import { apiFetch } from "./api";
 
 /**
- * Authenticates a user and returns the JWT token { token }.
+ * Autentica al usuario y devuelve el token JWT { token }.
  * @param {string} email
  * @param {string} password
  * @returns {Promise<{ token: string }>}
@@ -11,13 +11,13 @@ export const authService = {
         const data = await apiFetch("/auth/login", {
             method: "POST",
             body: JSON.stringify({ email, password }),
-        }, true); // skipAuth = true (public endpoint)
+        }, true); // skipAuth = true (endpoint público)
         return data;
     },
 
     /**
-     * Creates a new USER account and returns an access token.
-     * API RegisterRequest only accepts { email, password } — nombre is NOT a valid field.
+     * Crea una nueva cuenta de usuario y devuelve el token de acceso.
+     * La solicitud de registro de la API solo acepta { email, password } — el nombre NO es un campo válido.
      * @param {string} email
      * @param {string} password
      * @returns {Promise<{ token: string }>}
@@ -26,12 +26,12 @@ export const authService = {
         const data = await apiFetch("/auth/register", {
             method: "POST",
             body: JSON.stringify({ email, password }),
-        }, true); // skipAuth = true (public endpoint)
+        }, true); // skipAuth = true (endpoint público)
         return data;
     },
 
     /**
-     * Refreshes the access token using the refresh token.
+     * Refresca el token de acceso usando el token de refresco.
      * @param {string} refreshToken
      * @returns {Promise<{ token: string, refreshToken: string, expiresIn: number }>}
      */
@@ -39,7 +39,7 @@ export const authService = {
         const data = await apiFetch("/auth/refresh", {
             method: "POST",
             body: JSON.stringify({ refreshToken }),
-        }, true); // skipAuth = true (don't send Authorization header)
+        }, true); // skipAuth = true (no enviar cabecera Authorization)
         return data;
     },
 };

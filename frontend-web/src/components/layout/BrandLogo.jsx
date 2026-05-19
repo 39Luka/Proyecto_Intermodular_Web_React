@@ -1,3 +1,23 @@
+/**
+ * Logotipo vectorial de La Croassantina.
+ *
+ * Renderiza el ícono SVG del croissant de la marca. Es decorativo por defecto
+ * (`aria-hidden="true"`) por lo que no necesita texto alternativo.
+ * El texto de la marca lo provee el componente padre (ej. `Header`).
+ *
+ * @component
+ * @param {Object} props
+ * @param {string} [props.className=''] - Clases CSS adicionales para el elemento SVG.
+ * @returns {JSX.Element} SVG del logotipo de 72×72 px.
+ *
+ * @example
+ * // Uso en la cabecera con clase personalizada
+ * <BrandLogo className="header__brand-mark" />
+ *
+ * @example
+ * // Como ícono standalone
+ * <BrandLogo />
+ */
 function BrandLogo({ className = "" }) {
     return (
         <svg

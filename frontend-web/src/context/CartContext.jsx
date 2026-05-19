@@ -1,7 +1,24 @@
+/**
+ * @fileoverview Contexto global del carrito de la compra.
+ *
+ * Expone `CartProvider` y el hook `useCart`. El estado del carrito se persiste
+ * automáticamente en `localStorage` con la clave `"bakery_cart"` para sobrevivir
+ * recargas de página.
+ *
+ * Operaciones disponibles a través del contexto:
+ * - `addToCart(product, quantity)` — Añade o incrementa un producto (respeta el stock).
+ * - `removeFromCart(productId)` — Elimina completamente un producto.
+ * - `updateQuantity(productId, quantity)` — Actualiza la cantidad (elimina si < 1).
+ * - `clearCart()` — Vacía el carrito.
+ * - `cartTotal` — Suma del precio × cantidad de todos los artículos.
+ * - `cartCount` — Total de unidades en el carrito.
+ *
+ * @module CartContext
+ */
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 
-const CartContext = createContext();
+export const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
@@ -57,6 +74,10 @@ export const CartProvider = ({ children }) => {
         cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0),
     [cartItems]);
 
+    const cartCount = useMemo(() => 
+        cartItems.reduce((acc, item) => acc + item.quantity, 0),
+    [cartItems]);
+
     const contextValue = useMemo(() => ({
         cartItems,
         addToCart,
@@ -64,8 +85,8 @@ export const CartProvider = ({ children }) => {
         updateQuantity,
         clearCart,
         cartTotal,
-        cartCount: cartItems.length
-    }), [cartItems, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal]);
+        cartCount
+    }), [cartItems, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount]);
 
     return (
         <CartContext.Provider value={contextValue}>

@@ -1,4 +1,5 @@
 import { AuthProvider } from "./context/AuthContext";
+import { SearchProvider } from "./context/SearchContext";
 import { CartProvider } from "./context/CartContext";
 import Header from "./components/layout/Header.jsx";
 import Footer from "./components/layout/Footer.jsx";
@@ -9,7 +10,13 @@ function AppContent() {
     const { loading } = useAuth();
 
     if (loading) {
-        return <div className="full-page-loader">Cargando...</div>;
+        return (
+            <div className="section-loader-wrap section-loader-wrap--splash">
+                <div className="section-spinner section-spinner--splash" aria-label="Cargando..."></div>
+                <h1 className="section-loader-text section-loader-text--splash">La Croassantina</h1>
+                <p className="section-loader-subtext">Iniciando aplicación...</p>
+            </div>
+        );
     }
 
     return (
@@ -24,9 +31,11 @@ function AppContent() {
 function App() {
     return (
         <AuthProvider>
-            <CartProvider>
-                <AppContent />
-            </CartProvider>
+            <SearchProvider>
+                <CartProvider>
+                    <AppContent />
+                </CartProvider>
+            </SearchProvider>
         </AuthProvider>
     );
 }

@@ -1,94 +1,5 @@
-/**
- * Componente reutilizable para campos de formulario con validación
- * 
- * Este componente encapsula toda la lógica necesaria para renderizar un campo
- * de formulario con validación, incluyendo:
- * - Input con estilos de error dinámicos
- * - Label asociado correctamente
- * - Mensaje de error debajo del campo
- * - Atributos ARIA para accesibilidad
- * - Gestión automática de referencias (refs) para enfoque
- * 
- * Reduce el código repetitivo de ~20 líneas por campo a solo 1 línea,
- * manteniendo toda la funcionalidad de validación y accesibilidad.
- * 
- * @component
- * @param {Object} props - Propiedades del componente
- * 
- * @param {string} props.name - Nombre único del campo
- *   Debe coincidir con la clave en initialValues y validationRules
- *   Se usa para el atributo 'name' e 'id' del input
- *   Ejemplo: "email", "password", "confirmPassword"
- * 
- * @param {string} props.label - Texto visible de la etiqueta
- *   Se muestra encima del input como label
- *   Debe ser descriptivo para el usuario
- *   Ejemplo: "Email", "Contraseña", "Repetir contraseña"
- * 
- * @param {string} [props.type='text'] - Tipo de input HTML
- *   Controla el comportamiento y teclado del input
- *   Valores comunes: 'text', 'email', 'password', 'number', 'tel'
- *   Por defecto: 'text'
- * 
- * @param {string} [props.placeholder=''] - Texto placeholder del input
- *   Texto de ayuda que aparece cuando el input está vacío
- *   Por defecto: cadena vacía
- * 
- * @param {Object} props.validation - Objeto retornado por useFormValidation
- *   REQUERIDO: Este objeto debe contener:
- *   - values: Objeto con valores del formulario
- *   - errors: Objeto con mensajes de error
- *   - touched: Objeto con campos tocados
- *   - handleChange: Función para manejar cambios
- *   - handleBlur: Función para manejar blur
- *   - registerField: Función para registrar referencias
- * 
- * @returns {JSX.Element} Campo de formulario completo con validación
- * 
- * @example
- * // Uso básico con tipo de texto
- * <FormField
- *   name="username"
- *   label="Nombre de usuario"
- *   type="text"
- *   validation={validation}
- * />
- * 
- * @example
- * // Campo de email
- * <FormField
- *   name="email"
- *   label="Email"
- *   type="email"
- *   placeholder="tu@email.com"
- *   validation={validation}
- * />
- * 
- * @example
- * // Campo de contraseña
- * <FormField
- *   name="password"
- *   label="Contraseña"
- *   type="password"
- *   validation={validation}
- * />
- * 
- * @example
- * // Uso completo en un formulario
- * function MyForm() {
- *   const validation = useFormValidation(
- *     { email: '', password: '' },
- *     { email: ['required', 'email'], password: ['required'] }
- *   );
- *   
- *   return (
- *     <form>
- *       <FormField name="email" label="Email" type="email" validation={validation} />
- *       <FormField name="password" label="Password" type="password" validation={validation} />
- *     </form>
- *   );
- * }
- */
+import { useState } from "react";
+
 function FormField({
     name,
     label,
@@ -105,25 +16,46 @@ function FormField({
         registerField
     } = validation;
 
+    const [showPassword, setShowPassword] = useState(false);
+
     const hasError = touched[name] && errors[name];
     const errorId = `${name}-error`;
+    const isPassword = type === 'password';
+    const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
 
     return (
         <div className="auth-field">
             <label htmlFor={name}>{label}</label>
-            <input
-                ref={registerField(name)}
-                id={name}
-                name={name}
-                type={type}
-                className={hasError ? 'error' : ''}
-                value={values[name] || ''}
-                onChange={handleChange(name)}
-                onBlur={handleBlur(name)}
-                placeholder={placeholder}
-                aria-invalid={hasError ? 'true' : 'false'}
-                aria-describedby={errors[name] ? errorId : undefined}
-            />
+            <div className="auth-field__input-wrapper">
+                <input
+                    ref={registerField(name)}
+                    id={name}
+                    name={name}
+                    type={inputType}
+                    className={hasError ? 'error' : ''}
+                    value={values[name] || ''}
+                    onChange={handleChange(name)}
+                    onBlur={handleBlur(name)}
+                    placeholder={placeholder}
+                    aria-invalid={hasError ? 'true' : 'false'}
+                    aria-describedby={errors[name] ? errorId : undefined}
+                />
+                {isPassword && (
+                    <button
+                        type="button"
+                        className="auth-field__toggle"
+                        onClick={() => setShowPassword(!showPassword)}
+                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                        tabIndex="-1"
+                    >
+                        {showPassword ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                        ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        )}
+                    </button>
+                )}
+            </div>
             {hasError && (
                 <span id={errorId} className="auth-field__error">
                     {errors[name]}

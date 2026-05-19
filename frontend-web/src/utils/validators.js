@@ -53,8 +53,10 @@ export const required = (value) => {
  */
 export const email = (value) => {
     if (!value) return null;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(value) ? null : 'Introduce un email válido';
+    // Validación personalizada más relajada, no exige @ ni dominio estricto 
+    // para permitir usuarios de prueba o búsquedas parciales.
+    const customRegex = /^[^\s]+$/;
+    return customRegex.test(value) ? null : 'No debe contener espacios en blanco';
 };
 
 /**
@@ -77,6 +79,19 @@ export const email = (value) => {
 export const minLength = (min) => (value) => {
     if (!value) return null;
     return value.length >= min ? null : `Debe tener al menos ${min} caracteres`;
+};
+
+/**
+ * Crea un validador de longitud máxima
+ * 
+ * Factory function que retorna un validador configurado con una longitud máxima.
+ * 
+ * @param {number} max - Longitud máxima requerida en caracteres
+ * @returns {Function} Función validadora que acepta (value) => error|null
+ */
+export const maxLength = (max) => (value) => {
+    if (!value) return null;
+    return value.length <= max ? null : `Debe tener como máximo ${max} caracteres`;
 };
 
 /**
@@ -149,6 +164,7 @@ export const validators = {
     required,
     email,
     minLength,
+    maxLength,
     match,
     pattern
 };

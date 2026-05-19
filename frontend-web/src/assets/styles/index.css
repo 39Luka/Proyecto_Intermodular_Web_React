@@ -7,6 +7,7 @@
 @import "./components/ui/_buttons.css";
 @import "./components/ui/_states.css";
 @import "./components/ui/_pagination.css";
+@import "./components/ui/_search.css";
 @import "./components/cards/_card.css";
 @import "./components/layout/_header-footer.css";
 @import "./components/pages/_product-detail.css";
@@ -15,3 +16,4 @@
 @import "./components/pages/_commerce.css";
 @import "./components/pages/_showcase.css";
 @import "./components/pages/_admin.css";
+@import "./components/pages/_profile.css";

@@ -1,5 +1,32 @@
 import CardHorizontal from "../cards/CardHorizontal";
 
+/**
+ * Lista de productos incluidos en una compra.
+ *
+ * Mapea las líneas de detalle de la compra a tarjetas `CardHorizontal`,
+ * enriqueciendo cada línea con la imagen y descripción del producto si están
+ * disponibles en `productsMap`. Muestra un estado vacío cuando no hay líneas.
+ *
+ * @component
+ * @param {Object}   props
+ * @param {Array<{
+ *   productId: number,
+ *   title?: string,
+ *   quantity: number,
+ *   subtotal: number
+ * }>} props.details       - Líneas de detalle de la compra.
+ * @param {Object.<number, Object>} props.productsMap
+ *   Mapa `{ [productId]: product }` con la información completa de cada producto.
+ * @param {Function} [props.onNavigate] - Callback `(productId) => void` para navegar al detalle del producto.
+ * @returns {JSX.Element} Sección con tarjetas de los productos comprados o estado vacío.
+ *
+ * @example
+ * <PurchaseLines
+ *   details={purchaseDetails}
+ *   productsMap={productsMap}
+ *   onNavigate={(id) => navigate(`/products/${id}`)}
+ * />
+ */
 function PurchaseLines({ details, productsMap, onNavigate }) {
     const cardItems = details.map((line) => {
         const product = productsMap[line.productId];

@@ -10,7 +10,7 @@ const initialCreateForm = {
 
 function AdminUsers() {
     const [searchEmail, setSearchEmail] = useState("");
-    const [foundUser, setFoundUser] = useState(null);
+    const [foundUsers, setFoundUsers] = useState([]);
     const [createForm, setCreateForm] = useState(initialCreateForm);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -25,27 +25,34 @@ function AdminUsers() {
             setLoading(true);
             setError("");
             setMessage("");
-            const user = await userService.getUserByEmail(searchEmail.trim());
-            setFoundUser(user);
+            const response = await userService.getUserByEmail(searchEmail.trim());
+            // Manejar tanto si el backend devuelve una lista paginada, un array, o un solo objeto
+            const usersList = response?.content ? response.content : (Array.isArray(response) ? response : (response?.id ? [response] : []));
+            setFoundUsers(usersList);
+            if (usersList.length === 0) {
+                setError("No se encontraron usuarios.");
+            }
         } catch (err) {
-            setFoundUser(null);
+            setFoundUsers([]);
             setError(err.message || "No se pudo buscar el usuario.");
         } finally {
             setLoading(false);
         }
     }
 
-    async function handleToggleStatus() {
-        if (!foundUser) return;
-
+    async function handleToggleStatus(userToToggle) {
         try {
-            await userService.patchUser(foundUser.id, !foundUser.enabled);
-            setFoundUser((prev) => ({ ...prev, enabled: !prev.enabled }));
-            setMessage("Estado del usuario actualizado.");
+            await userService.patchUser(userToToggle.id, !userToToggle.enabled);
+            setFoundUsers(prevUsers => prevUsers.map(u => 
+                u.id === userToToggle.id ? { ...u, enabled: !u.enabled } : u
+            ));
+            setMessage(`Estado del usuario ${userToToggle.email} actualizado.`);
         } catch (err) {
             setError(err.message || "No se pudo cambiar el estado.");
         }
     }
+
+    const [showPassword, setShowPassword] = useState(false);
 
     function handleCreateChange(event) {
         const { name, value } = event.target;
@@ -60,7 +67,7 @@ function AdminUsers() {
             setError("");
             setMessage("");
             const createdUser = await userService.createUser(createForm);
-            setFoundUser(createdUser);
+            setFoundUsers([createdUser]);
             setCreateForm(initialCreateForm);
             setMessage("Usuario creado correctamente.");
         } catch (err) {
@@ -87,10 +94,10 @@ function AdminUsers() {
                     <h2>Buscar por email</h2>
                     <div className="admin-actions">
                         <input
-                            type="email"
+                            type="text"
                             value={searchEmail}
                             onChange={(event) => setSearchEmail(event.target.value)}
-                            placeholder="usuario@dominio.com"
+                            placeholder="Buscar por email..."
                             aria-label="Buscar usuario por email"
                             required
                         />
@@ -108,7 +115,7 @@ function AdminUsers() {
                             <input
                                 id="new-user-email"
                                 name="email"
-                                type="email"
+                                type="text"
                                 value={createForm.email}
                                 onChange={handleCreateChange}
                                 required
@@ -131,14 +138,29 @@ function AdminUsers() {
 
                     <div className="admin-form-field">
                         <label htmlFor="new-user-password">Contraseña</label>
-                        <input
-                            id="new-user-password"
-                            name="password"
-                            type="password"
-                            value={createForm.password}
-                            onChange={handleCreateChange}
-                            required
-                        />
+                        <div className="admin-password-wrapper">
+                            <input
+                                id="new-user-password"
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                className="admin-input--password"
+                                value={createForm.password}
+                                onChange={handleCreateChange}
+                                required
+                            />
+                            <button
+                                type="button"
+                                className="auth-field__toggle"
+                                onClick={() => setShowPassword(!showPassword)}
+                                tabIndex="-1"
+                            >
+                                {showPassword ? (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                )}
+                            </button>
+                        </div>
                     </div>
 
                     <div className="admin-actions">
@@ -149,25 +171,29 @@ function AdminUsers() {
                 </form>
             </div>
 
-            {foundUser && (
-                <article className="admin-form-card admin-stack" aria-live="polite">
-                    <h2>Usuario encontrado</h2>
-                    <p><strong>ID:</strong> {foundUser.id}</p>
-                    <p><strong>Email:</strong> {foundUser.email}</p>
-                    <p><strong>Rol:</strong> {foundUser.role}</p>
-                    <p>
-                        <strong>Estado:</strong>{" "}
-                        <span className={`status-pill ${foundUser.enabled ? "active" : "inactive"}`}>
-                            {foundUser.enabled ? "Habilitado" : "Deshabilitado"}
-                        </span>
-                    </p>
+            {foundUsers.length > 0 && (
+                <div className="admin-stack" aria-live="polite">
+                    <h2>Usuarios encontrados ({foundUsers.length})</h2>
+                    {foundUsers.map(user => (
+                        <article key={user.id} className="admin-form-card mb-1">
+                            <p><strong>ID:</strong> {user.id}</p>
+                            <p><strong>Email:</strong> {user.email}</p>
+                            <p><strong>Rol:</strong> {user.role}</p>
+                            <p>
+                                <strong>Estado:</strong>{" "}
+                                <span className={`status-pill ${user.enabled ? "active" : "inactive"}`}>
+                                    {user.enabled ? "Habilitado" : "Deshabilitado"}
+                                </span>
+                            </p>
 
-                    <div className="admin-actions">
-                        <button type="button" className="button button--text" onClick={handleToggleStatus}>
-                            {foundUser.enabled ? "Desactivar" : "Activar"} cuenta
-                        </button>
-                    </div>
-                </article>
+                            <div className="admin-actions mt-1">
+                                <button type="button" className="button button--text" onClick={() => handleToggleStatus(user)}>
+                                    {user.enabled ? "Desactivar" : "Activar"} cuenta
+                                </button>
+                            </div>
+                        </article>
+                    ))}
+                </div>
             )}
         </section>
     );

@@ -1,39 +1,28 @@
 /**
- * Pagination component.
- * Renders numbered page buttons with prev/next arrows.
- * Shows ellipsis (…) when there are many pages.
+ * Barra de paginación con botones anterior/siguiente.
  *
- * @param {number}   currentPage  - 0-indexed current page
- * @param {number}   totalPages   - Total number of pages
- * @param {function} onPageChange - Callback with new 0-indexed page number
+ * Renderiza un `<nav>` con botones de navegación de página y un indicador
+ * textual del tipo "Página X de Y". Los botones se deshabilitan automáticamente
+ * en los extremos (primera y última página).
+ * Retorna `null` si `totalPages` es 0 (sin resultados).
+ *
+ * @component
+ * @param {Object}   props
+ * @param {number}   props.currentPage  - Página actual (índice base 0).
+ * @param {number}   props.totalPages   - Número total de páginas.
+ * @param {Function} props.onPageChange - Callback `(newPage: number) => void` con el índice base 0 de la nueva página.
+ * @returns {JSX.Element|null} Barra de paginación o `null` si no hay páginas.
+ *
+ * @example
+ * <Pagination
+ *   currentPage={page}
+ *   totalPages={totalPages}
+ *   onPageChange={(newPage) => setPage(newPage)}
+ * />
  */
 function Pagination({ currentPage, totalPages, onPageChange }) {
-    if (!totalPages || totalPages <= 1) return null;
-
-    // Build the array of page items to render
-    const getPageItems = () => {
-        const pages = [];
-        const delta = 1; // pages shown around current
-        const left = currentPage - delta;
-        const right = currentPage + delta;
-
-        let prevNum = null;
-        for (let i = 0; i < totalPages; i++) {
-            const isEdge = i === 0 || i === totalPages - 1;
-            const isNearCurrent = i >= left && i <= right;
-
-            if (isEdge || isNearCurrent) {
-                if (prevNum !== null && i - prevNum > 1) {
-                    pages.push({ type: "ellipsis", key: `e-${i}` });
-                }
-                pages.push({ type: "page", num: i, key: i });
-                prevNum = i;
-            }
-        }
-        return pages;
-    };
-
-    const items = getPageItems();
+    // Mostrar siempre si hay al menos una página
+    if (totalPages === 0) return null;
 
     return (
         <nav className="pagination" aria-label="Paginación">
@@ -46,26 +35,14 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
                 ‹
             </button>
 
-            {items.map((item) =>
-                item.type === "ellipsis" ? (
-                    <span key={item.key} className="pagination__ellipsis">…</span>
-                ) : (
-                    <button
-                        key={item.key}
-                        className={`pagination__btn${item.num === currentPage ? " pagination__btn--active" : ""}`}
-                        onClick={() => onPageChange(item.num)}
-                        aria-label={`Página ${item.num + 1}`}
-                        aria-current={item.num === currentPage ? "page" : undefined}
-                    >
-                        {item.num + 1}
-                    </button>
-                )
-            )}
+            <span className="pagination__info">
+                Página {currentPage + 1} de {totalPages}
+            </span>
 
             <button
                 className="pagination__btn pagination__btn--nav"
                 onClick={() => onPageChange(currentPage + 1)}
-                disabled={currentPage === totalPages - 1}
+                disabled={currentPage >= totalPages - 1}
                 aria-label="Página siguiente"
             >
                 ›

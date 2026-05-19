@@ -8,7 +8,13 @@ function PurchaseDetail() {
     const navigate = useNavigate();
     const { purchase, details, productsMap, loading, error } = usePurchaseDetail(id);
 
-    if (loading) return <div className="status-message">Cargando detalle de compra...</div>;
+    if (loading) return (
+        <div className="section-loader-wrap section-loader-wrap--compact">
+            <div className="section-spinner" aria-label="Cargando..."></div>
+            <p className="section-loader-text">Cargando detalle de compra...</p>
+            <p className="section-loader-subtext">Un momento por favor.</p>
+        </div>
+    );
     if (error) return <div className="status-message status-message--error">Error: {error}</div>;
     if (!purchase) return <div className="status-message">Compra no encontrada</div>;
 

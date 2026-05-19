@@ -7,6 +7,7 @@ import { LOGIN_INITIAL_VALUES, LOGIN_VALIDATION_SCHEMA } from "../utils/validati
 
 function Login() {
     const [serverError, setServerError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const { login } = useAuth();
 
@@ -22,11 +23,14 @@ function Login() {
             return;
         }
 
+        setIsLoading(true);
         try {
             await login(validation.values.email, validation.values.password);
             navigate("/home");
         } catch {
             setServerError("No se pudo iniciar sesión. Revisa tus credenciales.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -34,7 +38,7 @@ function Login() {
         <div className="auth-container">
             <div className="auth-image" aria-hidden="true" />
             <div className="auth-form-wrapper">
-                <div className="auth-form">
+                <div className={`auth-form ${isLoading ? "form-loading" : ""}`}>
                     <h1 className="auth-title">Iniciar sesión</h1>
 
                     <form onSubmit={handleSubmit} noValidate>
@@ -43,8 +47,15 @@ function Login() {
 
                         {serverError && <p className="auth-error" role="alert">{serverError}</p>}
 
-                        <button type="submit" className="auth-submit" disabled={!validation.isFormValid()}>
-                            Entrar
+                        <button type="submit" className="auth-submit" disabled={isLoading || !validation.isFormValid()}>
+                            {isLoading ? (
+                                <span className="loading-wrapper">
+                                    <span className="spinner-mini"></span>
+                                    Entrando...
+                                </span>
+                            ) : (
+                                "Entrar"
+                            )}
                         </button>
                     </form>
 

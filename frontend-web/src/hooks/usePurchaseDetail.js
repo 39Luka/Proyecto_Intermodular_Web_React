@@ -3,8 +3,8 @@ import { purchaseService } from "../services/purchaseService";
 import { productService } from "../services/productService";
 
 /**
- * Hook to fetch purchase details, including lines and product names.
- * @param {number|string} purchaseId - The purchase ID.
+ * Hook para obtener los detalles de una compra, incluyendo líneas y nombres de productos.
+ * @param {number|string} purchaseId - El ID de la compra.
  * @returns {{ purchase: object|null, details: Array, productsMap: object, loading: boolean, error: string|null }}
  */
 export function usePurchaseDetail(purchaseId) {
@@ -22,14 +22,14 @@ export function usePurchaseDetail(purchaseId) {
             let hasError = false;
             let currentPurchase = null;
 
-            // 1. Fetch Purchase data (essential)
+            // 1. Obtener datos de la compra (esencial)
             try {
                 const purchaseData = await purchaseService.getPurchaseById(purchaseId);
                 if (purchaseData) {
                     setPurchase(purchaseData);
                     currentPurchase = purchaseData;
 
-                    // Set details from purchase data using API subtotal
+                    // Establecer detalles a partir de los datos de la compra usando el subtotal de la API
                     const rawItems = purchaseData.items || [];
                     const initialDetails = rawItems.map((item, index) => ({
                         id: `line-${index}-${item.productId || item.productoId}`,
@@ -37,25 +37,25 @@ export function usePurchaseDetail(purchaseId) {
                         productId: item.productId || item.productoId,
                         title: item.productName || item.nombreProducto,
                         quantity: item.quantity ?? item.cantidad,
-                        subtotal: item.subtotal // Use subtotal directly from API
+                        subtotal: item.subtotal // Usar el subtotal directamente desde la API
                     }));
                     setDetails(initialDetails);
                 } else {
-                    // Purchase not found (null)
+                    // Compra no encontrada (null)
                 }
             } catch (err) {
-                console.error("Failed to fetch purchase details", err);
+                console.error("Error al obtener los detalles de la compra", err);
                 setError(err.message);
                 hasError = true;
             } finally {
-                // Show content as soon as we have the purchase info
+                // Mostrar el contenido tan pronto como tengamos la información de la compra
                 setLoading(false);
             }
 
             if (hasError || !currentPurchase) return;
 
-            // 2. Fetch Products to resolve images/descriptions (enrichment)
-            // This happens in background; errors here shouldn't block the main view.
+            // 2. Obtener productos para resolver imágenes/descripciones (enriquecimiento)
+            // Esto ocurre en segundo plano; los errores aquí no deberían bloquear la vista principal.
             try {
                 const { products: allProducts } = await productService.getAllProducts(null, 0, 100);
                 const pMap = {};
@@ -63,10 +63,10 @@ export function usePurchaseDetail(purchaseId) {
                     pMap[p.id] = p;
                 });
                 setProductsMap(pMap);
-                // No need to recalculate prices or update details again
+                // No es necesario volver a calcular precios ni actualizar los detalles de nuevo
 
             } catch (err) {
-                console.warn("Could not fetch products for enrichment (prices/images might be missing)", err);
+                console.warn("No se pudieron obtener los productos para el enriquecimiento (pueden faltar precios/imágenes)", err);
             }
         };
 

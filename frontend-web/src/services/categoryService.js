@@ -1,12 +1,23 @@
+/**
+ * @fileoverview Servicio REST para categorías de productos.
+ *
+ * Todas las operaciones de lectura son públicas (skipAuth=true).
+ * Las operaciones de escritura (crear, actualizar) requieren rol ADMIN.
+ *
+ * @module categoryService
+ */
 import { apiFetch } from "./api";
 
+/** @private Extrae el array de items de una respuesta paginada de Spring o de un array directo. */
 const extractData = (data) => Array.isArray(data) ? data : (Array.isArray(data?.content) ? data.content : []);
 
 export const categoryService = {
     /**
-     * Lists all categories. The API requires pageable params (page + size).
-     * @param {number} page
-     * @param {number} size
+     * Lista todas las categorías. La API requiere parámetros de paginación (page y size).
+     *
+     * @param {number} page - Número de página.
+     * @param {number} size - Tamaño de página.
+     * @returns {Promise<Array>}
      */
     getCategories: async (page = 0, size = 100) => {
         const params = new URLSearchParams({ page, size });
@@ -15,14 +26,16 @@ export const categoryService = {
     },
 
     getCategoryById: async (id) => {
-        if (!id) throw new Error("Category ID is required");
-        const data = await apiFetch(`/categories/${id}`, {}, true); // public
+        if (!id) throw new Error("El ID de la categoría es requerido");
+        const data = await apiFetch(`/categories/${id}`, {}, true); // público
         return data || null;
     },
 
     /**
-     * Creates a new category. Admin-only.
-     * @param {string} name
+     * Solo Admin: Crea una nueva categoría.
+     *
+     * @param {string} name - Nombre de la nueva categoría.
+     * @returns {Promise<Object>}
      */
     createCategory: async (name) => {
         return apiFetch("/categories", {
@@ -32,9 +45,11 @@ export const categoryService = {
     },
 
     /**
-     * Updates a category by ID. Admin-only.
-     * @param {number} id
-     * @param {string} name
+     * Solo Admin: Actualiza el nombre de una categoría por su ID.
+     *
+     * @param {number} id - ID de la categoría a actualizar.
+     * @param {string} name - Nuevo nombre.
+     * @returns {Promise<Object>}
      */
     updateCategory: async (id, name) => {
         return apiFetch(`/categories/${id}`, {

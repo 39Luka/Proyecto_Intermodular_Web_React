@@ -161,3 +161,137 @@
         padding: 1.35rem;
     }
 }
+
+
+/* ===== User Avatar Premium Component Styles ===== */
+.user-avatar {
+  position: relative;
+  display: inline-block;
+  user-select: none;
+}
+
+.user-avatar__wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 50px;
+  background: rgba(var(--color-primary100-rgb), 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.user-avatar__wrapper:hover {
+  background: var(--color-primary100);
+  border-color: var(--color-primary200);
+}
+
+.user-avatar__button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+}
+
+.user-avatar__image, 
+.user-avatar__initials {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: cover;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  background: var(--color-primary500);
+  color: var(--color-neutral100);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.user-avatar__chevron {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  transition: transform 0.2s ease;
+}
+
+.user-avatar__chevron--open {
+  transform: rotate(180deg);
+}
+
+.user-avatar__dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: var(--color-neutral100);
+  min-width: 200px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-card-hover);
+  border: 1px solid var(--color-border);
+  list-style: none;
+  padding: 0.6rem;
+  z-index: 1000;
+  animation: avatarDropdownSlideIn 0.2s ease-out;
+}
+
+.user-avatar__dropdown-info {
+  padding: 0.6rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-avatar__dropdown-email {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-avatar__dropdown-role {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.user-avatar__divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 0.4rem 0;
+}
+
+.user-avatar__dropdown-link {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+  border-radius: 8px;
+  transition: background 0.2s ease;
+  display: block;
+  text-decoration: none;
+}
+
+.user-avatar__dropdown-link:hover {
+  background: var(--color-primary100);
+  color: var(--color-primary600);
+}
+
+@keyframes avatarDropdownSlideIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(-10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}

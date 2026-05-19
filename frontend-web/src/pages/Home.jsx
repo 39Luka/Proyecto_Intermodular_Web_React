@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import ProductSection from "../components/sections/ProductSection";
 import CardVertical from "../components/cards/CardVertical";
 import { useProducts, useTopSelling } from "../hooks/useProducts";
 
 function Home() {
     const navigate = useNavigate();
-    const { products: latest, loading: loadLatest, error: errLatest } = useProducts(null, 0, 4);
+    const { products: latest, loading: loadLatest, error: errLatest } = useProducts(null, 0, 4, null, "id", "desc");
     const { products: top, loading: loadTop, error: errTop } = useTopSelling();
 
     const handleNavigate = (id) => navigate(`/products/${id}`);
@@ -41,6 +41,14 @@ function Home() {
                     <p className="home-hero__description">
                         Productos horneados cada mañana con ingredientes naturales.
                     </p>
+                    <div className="home-hero__actions">
+                        <Link to="/products" className="button button--primary">
+                            Ver catálogo
+                        </Link>
+                        <Link to="/promo" className="button button--secondary">
+                            Ver ofertas
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="home-hero__panel">

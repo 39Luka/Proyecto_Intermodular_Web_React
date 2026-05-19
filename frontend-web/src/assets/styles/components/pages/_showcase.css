@@ -91,6 +91,10 @@
     flex-wrap: wrap;
 }
 
+.catalog-section-wrapper {
+    position: relative;
+}
+
 @media (max-width: 900px) {
     .home-hero {
         grid-template-columns: 1fr;

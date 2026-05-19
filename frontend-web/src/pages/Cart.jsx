@@ -24,8 +24,38 @@ function Cart() {
             for (const item of cartItems) {
                 if (availablePromotions[item.product.id] === undefined) {
                     try {
-                        const promos = await promotionService.getActivePromotions(item.product.id);
-                        newPromos[item.product.id] = promos;
+                        // 1. Comprobar si el producto está activo y tiene stock
+                        if (item.product.active === false || (item.product.stock !== null && item.product.stock <= 0)) {
+                            newPromos[item.product.id] = [];
+                            continue;
+                        }
+
+                        // 2. Pasar el user?.id para filtrar las promociones ya utilizadas por este usuario
+                        const promos = await promotionService.getActivePromotions(item.product.id, user?.id);
+                        
+                        // 3. Filtrar solo las promociones activas y válidas en el rango de fechas actual
+                        const now = new Date();
+                        now.setHours(0, 0, 0, 0);
+
+                        const validPromos = promos.filter(promo => {
+                            if (promo.active === false) return false;
+
+                            if (promo.startDate) {
+                                const start = new Date(promo.startDate);
+                                start.setHours(0, 0, 0, 0);
+                                if (now < start) return false;
+                            }
+
+                            if (promo.endDate) {
+                                const end = new Date(promo.endDate);
+                                end.setHours(23, 59, 59, 999);
+                                if (now > end) return false;
+                            }
+
+                            return true;
+                        });
+
+                        newPromos[item.product.id] = validPromos;
                     } catch {
                         newPromos[item.product.id] = [];
                     }
@@ -36,12 +66,12 @@ function Cart() {
             }
         };
         if (cartItems.length > 0) fetchPromos();
-    }, [cartItems, availablePromotions]);
+    }, [cartItems, availablePromotions, user?.id]);
 
     const handlePromoSelect = (productId, promoId) => {
         setSelectedPromotions((prev) => ({
             ...prev,
-            [productId]: promoId !== "" ? parseInt(promoId) : null
+            [productId]: promoId !== "" ? Number(promoId) : null
         }));
     };
 
@@ -49,7 +79,7 @@ function Cart() {
         const promoId = selectedPromotions[productId];
         if (!promoId) return 0;
         const promos = availablePromotions[productId];
-        const selectedPromo = promos?.find((promo) => promo.id === parseInt(promoId));
+        const selectedPromo = promos?.find((promo) => String(promo.id) === String(promoId));
         if (selectedPromo && selectedPromo.discountPercentage) {
             return (originalPrice * selectedPromo.discountPercentage) / 100;
         }
@@ -75,9 +105,9 @@ function Cart() {
                 promotionId: selectedPromotions[item.product.id] || null
             }));
 
-            // The backend requires `userId` when the authenticated user is ADMIN.
-            // For regular users it is optional (resolved from the JWT), but
-            // sending it is harmless and keeps the call uniform.
+            // El backend exige `userId` cuando el usuario autenticado es ADMINISTRADOR.
+            // Para usuarios normales es opcional (se resuelve desde el JWT), pero
+            // enviarlo es inofensivo y mantiene la llamada uniforme.
             const userId = user?.id ?? null;
             await purchaseService.createPurchase(itemsToBuy, userId);
             clearCart();
@@ -132,7 +162,7 @@ function Cart() {
                 {error && <div className="admin-error-msg">{error}</div>}
 
                 <div className="cart-order-panel">
-                    <div className="cart-items-group">
+                    <ul className="cart-items-group">
                         {cartItems.map((item) => (
                             <CartItem
                                 key={item.product.id}
@@ -144,7 +174,7 @@ function Cart() {
                                 onRemove={removeFromCart}
                             />
                         ))}
-                    </div>
+                    </ul>
 
                     <CartSummary
                         total={finalTotal}

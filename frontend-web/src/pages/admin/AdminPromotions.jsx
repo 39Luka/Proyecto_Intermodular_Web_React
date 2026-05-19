@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { productService } from "../../services/productService";
 import { promotionService } from "../../services/promotionService";
 import { formatDate } from "../../utils/formatters";
+import Pagination from "../../components/ui/Pagination";
 
 const initialForm = {
     productId: "",
@@ -20,6 +21,30 @@ function AdminPromotions() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [page, setPage] = useState(0);
+    const pageSize = 8;
+
+    const filteredPromotions = useMemo(() => {
+        const term = searchTerm.toLowerCase().trim();
+        if (!term) return promotions;
+        return promotions.filter((p) => 
+            p.description?.toLowerCase().includes(term) || 
+            p.productName?.toLowerCase().includes(term) ||
+            String(p.productId).includes(term)
+        );
+    }, [promotions, searchTerm]);
+
+    const totalPages = Math.max(1, Math.ceil(filteredPromotions.length / pageSize));
+
+    const paginatedPromotions = useMemo(() => {
+        const start = page * pageSize;
+        return filteredPromotions.slice(start, start + pageSize);
+    }, [filteredPromotions, page, pageSize]);
+
+    useEffect(() => {
+        setPage(0);
+    }, [searchTerm]);
 
     useEffect(() => {
         loadData();
@@ -87,7 +112,7 @@ function AdminPromotions() {
         }
     }
 
-    if (loading) return <div className="admin-loading">Cargando promociones...</div>;
+    const showInitialLoading = loading && promotions.length === 0;
 
     return (
         <section className="admin-page admin-stack" aria-labelledby="admin-promotions-title">
@@ -151,45 +176,82 @@ function AdminPromotions() {
                 </div>
             </form>
 
-            <div className="admin-table-wrapper">
-                <table className="admin-table">
-                    <caption className="sr-only">Tabla de promociones</caption>
-                    <thead>
-                        <tr>
-                            <th scope="col">Descripción</th>
-                            <th scope="col">Producto</th>
-                            <th scope="col">Descuento</th>
-                            <th scope="col">Vigencia</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {promotions.map((promotion) => (
-                            <tr key={promotion.id}>
-                                <th scope="row">{promotion.description}</th>
-                                <td>{promotion.productName || `#${promotion.productId}`}</td>
-                                <td>{promotion.discountPercentage}%</td>
-                                <td>{formatDate(promotion.startDate)} - {formatDate(promotion.endDate)}</td>
-                                <td>
-                                    <span className={`status-pill ${promotion.active ? "active" : "inactive"}`}>
-                                        {promotion.active ? "Activa" : "Inactiva"}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button
-                                        type="button"
-                                        className="button button--text"
-                                        onClick={() => handleToggleActive(promotion)}
-                                    >
-                                        {promotion.active ? "Desactivar" : "Activar"}
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <div className="admin-search-container">
+                <input
+                    type="text"
+                    placeholder="Buscar por descripción o producto..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="admin-search-input"
+                    aria-label="Filtrar promociones"
+                />
             </div>
+
+            {showInitialLoading ? (
+                <div className="section-loader-wrap section-loader-wrap--compact">
+                    <div className="section-spinner" aria-label="Cargando..."></div>
+                    <p className="section-loader-text">Cargando promociones...</p>
+                    <p className="section-loader-subtext">Un momento por favor.</p>
+                </div>
+            ) : (
+                <div className={`admin-table-wrapper ${loading ? "admin-table--loading" : ""}`}>
+                    <table className="admin-table">
+                        <caption className="sr-only">Tabla de promociones</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Descripción</th>
+                                <th scope="col">Producto</th>
+                                <th scope="col">Descuento</th>
+                                <th scope="col">Vigencia</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {paginatedPromotions.length === 0 ? (
+                                <tr>
+                                    <td colSpan="6" className="text-center p-2">
+                                        No se encontraron promociones.
+                                    </td>
+                                </tr>
+                            ) : (
+                                paginatedPromotions.map((promotion) => (
+                                    <tr key={promotion.id}>
+                                        <th scope="row">{promotion.description}</th>
+                                        <td>{promotion.productName || promotion.detailLeft || `#${promotion.productId}`}</td>
+                                        <td>{promotion.discountPercentage}%</td>
+                                        <td>
+                                            {promotion.startDate ? <time dateTime={promotion.startDate}>{formatDate(promotion.startDate)}</time> : "N/A"}
+                                            {" - "}
+                                            {promotion.endDate ? <time dateTime={promotion.endDate}>{formatDate(promotion.endDate)}</time> : "N/A"}
+                                        </td>
+                                        <td>
+                                            <span className={`status-pill ${promotion.active ? "active" : "inactive"}`}>
+                                                {promotion.active ? "Activa" : "Inactiva"}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button
+                                                type="button"
+                                                className="button button--text"
+                                                onClick={() => handleToggleActive(promotion)}
+                                            >
+                                                {promotion.active ? "Desactivar" : "Activar"}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            <Pagination 
+                currentPage={page} 
+                totalPages={totalPages} 
+                onPageChange={setPage} 
+            />
         </section>
     );
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { categoryService } from "../../services/categoryService";
 import { productService } from "../../services/productService";
@@ -22,6 +22,7 @@ function AdminProductForm() {
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(isEditMode);
     const [error, setError] = useState("");
+    const fileInputRef = useRef(null);
 
     const loadCategories = useCallback(async () => {
         try {
@@ -82,11 +83,17 @@ function AdminProductForm() {
         setLoading(true);
         setError("");
 
+        let imageToSave = formData.imageBase64;
+        if (imageToSave && imageToSave.includes(",")) {
+            imageToSave = imageToSave.split(",")[1];
+        }
+
         const payload = {
             ...formData,
             price: Number(formData.price),
             stock: Number(formData.stock),
             categoryId: Number(formData.categoryId),
+            imageBase64: imageToSave,
         };
 
         try {
@@ -103,7 +110,13 @@ function AdminProductForm() {
         }
     }
 
-    if (fetching) return <div className="admin-loading">Cargando producto...</div>;
+    if (fetching) return (
+        <div className="section-loader-wrap section-loader-wrap--compact">
+            <div className="section-spinner" aria-label="Cargando..."></div>
+            <p className="section-loader-text">Cargando producto...</p>
+            <p className="section-loader-subtext">Un momento por favor.</p>
+        </div>
+    );
 
     return (
         <section className="admin-page admin-stack" aria-labelledby="admin-product-form-title">
@@ -145,13 +158,47 @@ function AdminProductForm() {
                 </div>
 
                 <div className="admin-form-field">
-                    <label htmlFor="imageFile">Imagen del producto</label>
-                    <input id="imageFile" name="imageFile" type="file" accept="image/*" onChange={handleFileChange} />
-                    {formData.imageBase64 && (
-                        <div style={{ marginTop: '1rem' }}>
-                            <img src={formData.imageBase64} alt="Vista previa" style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'contain' }} />
-                        </div>
-                    )}
+                    <span className="admin-form-field__label">Imagen del producto</span>
+                    <div className="admin-image-upload-container">
+                        {formData.imageBase64 ? (
+                            <div className="admin-image-preview-wrapper">
+                                <img 
+                                    src={formData.imageBase64.startsWith('data:') ? formData.imageBase64 : `data:image/png;base64,${formData.imageBase64}`} 
+                                    alt="Vista previa" 
+                                    className="admin-image-preview" 
+                                />
+                                <button 
+                                    type="button" 
+                                    className="admin-image-remove" 
+                                    onClick={() => setFormData(prev => ({ ...prev, imageBase64: "" }))}
+                                    title="Quitar imagen"
+                                >
+                                    ×
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="admin-image-placeholder">
+                                <span>Sin imagen</span>
+                            </div>
+                        )}
+                        
+                        <button 
+                            type="button" 
+                            onClick={() => fileInputRef.current?.click()} 
+                            className="button button--secondary admin-image-btn"
+                        >
+                            {formData.imageBase64 ? "Cambiar imagen" : "Subir imagen"}
+                        </button>
+                        <input 
+                            ref={fileInputRef}
+                            type="file" 
+                            accept="image/*" 
+                            onChange={handleFileChange} 
+                            className="display-none" 
+                            aria-hidden="true"
+                            tabIndex="-1"
+                        />
+                    </div>
                 </div>
 
                 <div className="admin-form-field">

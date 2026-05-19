@@ -1,6 +1,48 @@
 import { useState, useRef, useCallback, useMemo } from 'react';
 import { validators as validatorFunctions } from '../utils/validators';
 
+/**
+ * Hook para gestión de formularios con validación integrada.
+ *
+ * Centraliza el estado (values, errors, touched), la validación campo a campo
+ * y la validación completa del formulario. Soporta tres formatos de regla:
+ * - `string`: nombre de un validador predefinido (ej. `"required"`, `"email"`).
+ * - `{ type, value }`: validador factory (ej. `{ type: "minLength", value: 6 }`).
+ * - `Function`: validador personalizado `(value, allValues) => error|null`.
+ *
+ * @param {Object.<string, any>} initialValues
+ *   Valores iniciales del formulario. Las claves deben coincidir con los nombres de campo.
+ * @param {Object.<string, Array>} validationRules
+ *   Reglas de validación por campo. Cada valor es un array de reglas en cualquiera de los tres formatos.
+ * @returns {{
+ *   values: Object,
+ *   errors: Object,
+ *   touched: Object,
+ *   handleChange: (fieldName: string) => (e: Event) => void,
+ *   handleBlur: (fieldName: string) => () => void,
+ *   validateAll: () => boolean,
+ *   focusFirstError: () => void,
+ *   registerField: (fieldName: string) => (ref: HTMLElement) => void,
+ *   isFormValid: () => boolean,
+ *   resetForm: () => void,
+ *   setValues: Function
+ * }} Objeto con estado y utilidades del formulario.
+ *
+ * @example
+ * const validation = useFormValidation(
+ *   { email: '', password: '' },
+ *   { email: ['required', 'email'], password: ['required', { type: 'minLength', value: 6 }] }
+ * );
+ *
+ * const handleSubmit = (e) => {
+ *   e.preventDefault();
+ *   if (!validation.validateAll()) {
+ *     validation.focusFirstError();
+ *     return;
+ *   }
+ *   // procesar formulario…
+ * };
+ */
 export const useFormValidation = (initialValues, validationRules) => {
     const [values, setValues] = useState(initialValues);
     const [errors, setErrors] = useState({});

@@ -95,3 +95,232 @@
 .empty-state--accent .empty-state__description {
     color: var(--color-text-secondary);
 }
+
+/* Loading States */
+.loading-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.spinner-mini {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(var(--color-text-on-primary-rgb), 0.3);
+    border-top-color: var(--color-text-on-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Spinner on white background or light buttons */
+.spinner-mini--dark {
+    border-color: rgba(var(--color-primary600-rgb), 0.2);
+    border-top-color: var(--color-primary600);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.form-loading {
+    opacity: 0.8;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Progress Bar (Alternative to Overlay Spinner) */
+.loading-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(var(--color-primary500-rgb), 0.1);
+    overflow: hidden;
+    z-index: 20;
+    border-radius: 3px;
+}
+
+.loading-bar__inner {
+    width: 40%;
+    height: 100%;
+    background: var(--color-primary500);
+    animation: loadingBarMove 1.5s infinite ease-in-out;
+}
+
+@keyframes loadingBarMove {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(250%); }
+}
+
+/* Skeleton Loading */
+.skeleton {
+    background: linear-gradient(90deg, 
+        rgba(var(--color-neutral200-rgb), 0.5) 25%, 
+        rgba(var(--color-neutral300-rgb), 0.8) 50%, 
+        rgba(var(--color-neutral200-rgb), 0.5) 75%);
+    background-size: 200% 100%;
+    animation: skeletonPulse 1.5s infinite linear;
+    border-radius: 12px;
+}
+
+@keyframes skeletonPulse {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+}
+
+.skeleton-text {
+    height: 1rem;
+    margin-bottom: 0.5rem;
+    width: 100%;
+}
+
+.skeleton-text--short {
+    width: 60%;
+}
+
+.skeleton-image {
+    width: 100%;
+    height: 100%;
+}
+
+/* ===== Premium Section Loader & Spinner Styles ===== */
+.section-loader-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+    text-align: center;
+    background: rgba(var(--color-neutral100-rgb), 0.55);
+    border: 1px solid rgba(var(--color-primary200-rgb), 0.15);
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-card);
+    animation: sectionFadeIn 0.3s ease-out;
+    margin: 1.5rem auto;
+    width: 100%;
+}
+
+.section-spinner {
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 3.5px solid rgba(var(--color-primary400-rgb), 0.15);
+    border-top-color: var(--color-primary500);
+    border-radius: 50%;
+    animation: sectionSpin 0.9s linear infinite;
+    margin-bottom: 1.25rem;
+}
+
+.section-loader-text {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.35rem;
+}
+
+.section-loader-subtext {
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    color: var(--color-text-secondary);
+}
+
+@keyframes sectionSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes sectionFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Container for the product section list/loader */
+.section-body-wrapper {
+    position: relative;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Specialized variations of loaders to avoid hardcoding inline styles in JSX */
+.section-loader-wrap--compact {
+    margin: 4rem auto;
+    max-width: 600px;
+}
+
+.section-loader-wrap--auth {
+    margin: 5rem auto;
+    max-width: 600px;
+}
+
+.section-loader-wrap--splash {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    background: var(--color-bg-primary);
+}
+
+.section-spinner--splash {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-width: 4.5px;
+}
+
+.section-loader-text--splash {
+    font-size: 1.35rem;
+}
+
+/* ===== Card Skeleton Utility Classes ===== */
+.skeleton-text--eyebrow {
+    height: 0.8rem;
+    width: 40%;
+}
+
+.skeleton-text--title {
+    height: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.skeleton-text--body-short {
+    width: 80%;
+}
+
+.card__meta--skeleton {
+    border-top-color: transparent !important;
+}
+
+.skeleton-text--meta-left {
+    width: 4rem;
+    height: 1.2rem;
+    margin-bottom: 0 !important;
+}
+
+.skeleton-text--meta-right {
+    width: 5rem;
+    height: 1rem;
+    margin-bottom: 0 !important;
+}
+
+.empty-state__action {
+    margin-top: 1rem;
+}
+
