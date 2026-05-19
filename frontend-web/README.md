@@ -2,6 +2,8 @@
 
 Una aplicación web e-commerce completa para un obrador/panadería desarrollada en **React 18** y **Vite**, siguiendo las mejores prácticas de Clean Code, Custom Hooks, Context API y componentes funcionales.
 
+🌐 **Live Demo / Entorno de Producción:** [https://proyecto-intermodular-web-react-1.onrender.com/](https://proyecto-intermodular-web-react-1.onrender.com/)
+
 ## 📋 Descripción General
 
 **La Croassantina** es una aplicación web (SPA) que permite a los usuarios:
